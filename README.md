@@ -21,4 +21,4 @@ Data Analyst with a background in Java backend development and 18 years of busin
 * **Tools:** SQL (PostgreSQL, MySQL), Python (Pandas, NumPy, Matplotlib, Seaborn), Tableau
 * **Background:** Java development · 18 years in business management
 * **Location:** Kyiv, Ukraine (Open to Remote)
-* **Contacts:** [GitHub](https://github.com/ArtemMakovskyy) | [LinkedIn](https://www.linkedin.com/in/artem-makovskyi-557783304/)
+* **Contacts:** [Email](mailto:artem.makovskyi.jv@gmail.com) | [GitHub](https://github.com/ArtemMakovskyy) | [LinkedIn](https://www.linkedin.com/in/artem-makovskyi-557783304/)
