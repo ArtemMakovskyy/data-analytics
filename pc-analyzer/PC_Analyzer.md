@@ -4,7 +4,8 @@
 
 *Tech stack:* Java 17 · Spring Boot · MySQL · Jsoup · Selenium · Apache POI · Excel
 
-**Repo:** [GitHub](https://github.com/ArtemMakovskyy/pc_analyzer) · **Sample Report:** [`pc_configuration 2025-02-09.xlsx`](https://github.com/ArtemMakovskyy/pc_analyzer/raw/main/src/main/resources/files/pc_configuration%202025-02-09%2011-53.xlsx)
+**Repo:** [GitHub](https://github.com/ArtemMakovskyy/pc_analyzer) · **Sample Report:** - [Link to download pc_configuration 2025-02-09 11-53.zip](https://drive.google.com/file/d/1Qc3C0PZnqo7e8zi6-J41b7_4LBnkwig-/view?usp=sharing)
+
 
 ---
 
