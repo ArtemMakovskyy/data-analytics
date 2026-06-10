@@ -11,6 +11,7 @@ Select a category to view the relevant case studies and code:
 * [📂 SQL Projects](sql-projects/SQL_Projects.md) — Query optimization, database schema design, ETL processes, and analytical queries.
 * [📊 Tableau Projects](tableau-projects/Tableau_Projects.md) — Interactive business dashboards, KPI visualization, and metrics analysis.
 * [🐍 Python Projects](python-projects/Python_Projects.md) — Exploratory data analysis, data cleaning, and statistical visualization.
+* [🖥️ PC Analyzer](pc-analyzer/PC_Analyzer.md) — ETL pipeline, price/performance analytics, and Excel reporting across 500+ PC components.
 
 ---
 
