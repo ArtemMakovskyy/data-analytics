@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карта статистичного аналізу даних</title>
+<style>
+  :root{
+    --bg:#F6F4EF;
+    --ink:#1F2421;
+    --ink-soft:#5B6059;
+    --line:#D8D4C8;
+    --card:#FFFFFF;
+    --accent-blue:#2F5D8A;
+    --accent-blue-bg:#E6F0F8;
+    --accent-coral:#B5562F;
+    --accent-coral-bg:#FBEBE2;
+    --accent-teal:#1E7A63;
+    --accent-teal-bg:#E2F2EC;
+    --accent-purple:#5B4B8A;
+    --accent-purple-bg:#ECE8F6;
+    --accent-amber:#9A6B16;
+    --accent-amber-bg:#FAF0DB;
+    --accent-green:#3B7A23;
+    --accent-green-bg:#EBF4E3;
+    --accent-red:#A23A2E;
+    --accent-red-bg:#F8E5E2;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+  @font-face{
+    font-family:'Fraunces';
+    src: local('Georgia');
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    line-height:1.5;
+    padding-bottom:80px;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+
+  header.top{
+    padding:64px 24px 40px;
+    border-bottom:1px solid var(--line);
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.015), transparent);
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 14px;
+  }
+  h1{
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight:400;
+    font-size:clamp(32px, 5vw, 48px);
+    line-height:1.08;
+    margin:0 0 16px;
+    letter-spacing:-0.01em;
+  }
+  h1 em{font-style:italic; color:var(--accent-coral);}
+  .sub{
+    font-size:17px;
+    color:var(--ink-soft);
+    max-width:620px;
+    margin:0;
+  }
+
+  nav.toc{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:32px;
+  }
+  nav.toc a{
+    font-family: var(--mono);
+    font-size:12px;
+    text-decoration:none;
+    color:var(--ink);
+    border:1px solid var(--line);
+    padding:7px 12px;
+    border-radius:100px;
+    background:var(--card);
+    transition:border-color .15s, background .15s;
+  }
+  nav.toc a:hover{border-color:var(--ink); background:#fff;}
+
+  section.scheme{
+    padding:56px 24px;
+    border-bottom:1px solid var(--line);
+    scroll-margin-top:24px;
+  }
+  section.scheme:nth-of-type(odd){background:rgba(0,0,0,0.012);}
+
+  .scheme-head{
+    display:flex;
+    align-items:baseline;
+    gap:16px;
+    margin-bottom:8px;
+  }
+  .scheme-num{
+    font-family: var(--mono);
+    font-size:13px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  h2{
+    font-family: Georgia, serif;
+    font-weight:400;
+    font-size:28px;
+    margin:0;
+    letter-spacing:-0.005em;
+  }
+  .scheme-desc{
+    color:var(--ink-soft);
+    font-size:15px;
+    margin:8px 0 28px;
+    max-width:640px;
+  }
+
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:8px;
+    overflow:hidden;
+  }
+  svg{display:block; width:100%; height:auto;}
+
+  .node{cursor:pointer;}
+  .node rect{transition:filter .15s, transform .15s;}
+  .node:hover rect{filter:brightness(0.96);}
+  .node:active rect{transform:scale(0.99);}
+  .node text{pointer-events:none;}
+
+  .hint{
+    font-family: var(--mono);
+    font-size:11px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin-top:14px;
+    letter-spacing:0.02em;
+  }
+  .hint .ti{font-style:normal;}
+
+  /* Expandable detail panel */
+  .detail-panel{
+    margin-top:0;
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease, margin-top .35s ease;
+  }
+  .detail-panel.open{
+    margin-top:18px;
+    max-height:600px;
+  }
+  .detail-inner{
+    border:1px solid var(--line);
+    border-left:4px solid var(--detail-color, var(--accent-blue));
+    border-radius:10px;
+    padding:20px 22px;
+    background:var(--card);
+  }
+  .detail-inner h3{
+    font-family: Georgia, serif;
+    font-weight:400;
+    font-size:18px;
+    margin:0 0 10px;
+    color:var(--detail-color, var(--accent-blue));
+  }
+  .detail-inner p{
+    margin:0 0 10px;
+    font-size:14.5px;
+    color:var(--ink);
+  }
+  .detail-inner p:last-child{margin-bottom:0;}
+  .detail-inner code{
+    font-family:var(--mono);
+    background:rgba(0,0,0,0.05);
+    padding:1px 6px;
+    border-radius:4px;
+    font-size:13px;
+  }
+  .detail-inner ul{margin:8px 0 0; padding-left:18px;}
+  .detail-inner li{font-size:14.5px; margin-bottom:5px;}
+
+  footer{
+    padding:40px 24px 20px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13px;
+    font-family:var(--mono);
+  }
+
+  @media (max-width: 640px){
+    header.top{padding:48px 20px 32px;}
+    section.scheme{padding:40px 20px;}
+    h2{font-size:22px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Карта статистичного аналізу · 5 схем</p>
+    <h1>Як рухатись від <em>сирих даних</em> до висновку</h1>
+    <p class="sub">Клікай на блоки в кожній схемі — розкриється коротке пояснення логіки рішення. Це не підручник, а маршрут: розподіл → викиди → вибірка → надійність → кореляція.</p>
+    <nav class="toc">
+      <a href="#s0">0. Загальна карта</a>
+      <a href="#s1">1. Викиди</a>
+      <a href="#s2">2. Вибірка</a>
+      <a href="#s3">3. Нормальність і значущість</a>
+      <a href="#s4">4. Кореляція</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ SECTION 0: OVERVIEW ============ -->
+<section class="scheme" id="s0">
+  <div class="wrap">
+    <div class="scheme-head">
+      <span class="scheme-num">00</span>
+      <h2>Загальна карта аналізу</h2>
+    </div>
+    <p class="scheme-desc">П'ять послідовних етапів. Кожен наступний крок спирається на висновки попереднього.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 680 460" id="svg-overview">
+        <defs><marker id="arrowO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+        <g class="node" data-detail="ov-1" data-color="var(--accent-blue)">
+          <rect x="40" y="40" width="600" height="56" rx="10" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="340" y="60" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-blue)">1. Опис розподілу даних</text>
+          <text x="340" y="80" text-anchor="middle" dominant-baseline="central" font-size="12" fill="var(--accent-blue)" opacity="0.8">діапазон, квартилі, IQR, стандартне відхилення</text>
+        </g>
+        <line x1="340" y1="96" x2="340" y2="120" stroke="#999" stroke-width="1.5" marker-end="url(#arrowO)"/>
+
+        <g class="node" data-detail="ov-2" data-color="var(--accent-coral)">
+          <rect x="40" y="120" width="600" height="56" rx="10" fill="var(--accent-coral-bg)" stroke="var(--accent-coral)" stroke-width="0.75"/>
+          <text x="340" y="140" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-coral)">2. Виявлення викидів</text>
+          <text x="340" y="160" text-anchor="middle" dominant-baseline="central" font-size="12" fill="var(--accent-coral)" opacity="0.8">візуально, метод IQR, метод Z-оцінки</text>
+        </g>
+        <line x1="340" y1="176" x2="340" y2="200" stroke="#999" stroke-width="1.5" marker-end="url(#arrowO)"/>
+
+        <g class="node" data-detail="ov-3" data-color="var(--accent-teal)">
+          <rect x="40" y="200" width="600" height="56" rx="10" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="340" y="220" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-teal)">3. Формування вибірки (sampling)</text>
+          <text x="340" y="240" text-anchor="middle" dominant-baseline="central" font-size="12" fill="var(--accent-teal)" opacity="0.8">випадкова, стратифікована, систематична, кластерна, bootstrap</text>
+        </g>
+        <line x1="340" y1="256" x2="340" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrowO)"/>
+
+        <g class="node" data-detail="ov-4" data-color="var(--accent-purple)">
+          <rect x="40" y="280" width="600" height="56" rx="10" fill="var(--accent-purple-bg)" stroke="var(--accent-purple)" stroke-width="0.75"/>
+          <text x="340" y="300" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-purple)">4. Оцінка надійності</text>
+          <text x="340" y="320" text-anchor="middle" dominant-baseline="central" font-size="12" fill="var(--accent-purple)" opacity="0.8">довірчий інтервал, p-value, тест на нормальність</text>
+        </g>
+        <line x1="340" y1="336" x2="340" y2="360" stroke="#999" stroke-width="1.5" marker-end="url(#arrowO)"/>
+
+        <g class="node" data-detail="ov-5" data-color="#A23A6B">
+          <rect x="40" y="360" width="600" height="56" rx="10" fill="#FBEAF0" stroke="#A23A6B" stroke-width="0.75"/>
+          <text x="340" y="380" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#A23A6B">5. Кореляція між змінними</text>
+          <text x="340" y="400" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#A23A6B" opacity="0.8">Пірсон, Спірмен, Кендалл — залежно від типу даних</text>
+        </g>
+
+        <text x="340" y="432" text-anchor="middle" font-size="11" fill="#888" font-family="monospace">клікни на будь-який блок, щоб розкрити деталі →</text>
+      </svg>
+    </div>
+    <p class="hint">клікни на блок схеми</p>
+
+    <div class="detail-panel" id="panel-ov-1"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Опис розподілу даних</h3>
+      <p><strong>Діапазон</strong> (range) = max − min. Простий, але чутливий до викидів.</p>
+      <p><strong>Квартилі / IQR</strong> = Q3 − Q1. Стійкіший до викидів, показує розкид середніх 50% даних.</p>
+      <p><strong>Стандартне відхилення</strong> враховує всі точки, тому чутливе до аномалій — <code>np.std()</code>.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ov-2"><div class="detail-inner" style="--detail-color:var(--accent-coral)">
+      <h3>Виявлення викидів</h3>
+      <p>Спочатку — графік (lineplot / scatterplot), щоб побачити аномалії візуально.</p>
+      <p><strong>IQR-метод:</strong> межі <code>[Q1 − 1.5·IQR, Q3 + 1.5·IQR]</code>.</p>
+      <p><strong>Z-score:</strong> викид, якщо <code>|Z| &gt; 3</code> — рахує відхилення від середнього в одиницях стандартного відхилення.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ov-3"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Формування вибірки</h3>
+      <p>Якщо популяція велика — обираєш метод семплування: простий випадковий, стратифікований (за групами), систематичний (кожен n-й), кластерний (за регіонами).</p>
+      <p><strong>Bootstrap</strong> — повторна вибірка із заміщенням, коли вибірка мала або розподіл невідомий. Дає розподіл середніх для надійнішої оцінки параметра популяції.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ov-4"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>Оцінка надійності</h3>
+      <p><strong>Довірчий інтервал</strong> — діапазон, що з заданою ймовірністю (зазвичай 95%) містить істинний параметр популяції.</p>
+      <p><strong>p-value</strong> — ймовірність отримати такі дані випадково, якщо нульова гіпотеза правдива. Поріг — <code>0.05</code>.</p>
+      <p>Перед застосуванням деяких тестів варто перевірити <strong>нормальність розподілу</strong> (Шапіро-Уілк, Д'Агостіно-Пірсон).</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ov-5"><div class="detail-inner" style="--detail-color:#A23A6B">
+      <h3>Кореляція між змінними</h3>
+      <p><strong>Пірсон</strong> — лінійний зв'язок, нормальний розподіл, неперервні дані.</p>
+      <p><strong>Спірмен</strong> — монотонний / ранговий зв'язок, ненормальні або порядкові дані.</p>
+      <p><strong>Кендалл</strong> — рангова кореляція, найстійкіша до аномалій.</p>
+      <p>Завжди перевіряй <code>p-value</code> перед тим, як довіряти величині коефіцієнта.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 1: OUTLIERS ============ -->
+<section class="scheme" id="s1">
+  <div class="wrap">
+    <div class="scheme-head">
+      <span class="scheme-num">01</span>
+      <h2>Виявлення та обробка викидів</h2>
+    </div>
+    <p class="scheme-desc">Дерево рішень: який метод обрати та що робити з викидом після виявлення.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 680 520">
+        <defs><marker id="arrow1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+        <g class="node" data-detail="o-start">
+          <rect x="240" y="30" width="200" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="52" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">Є набір даних</text>
+        </g>
+        <line x1="340" y1="74" x2="340" y2="100" stroke="#999" stroke-width="1.5" marker-end="url(#arrow1)"/>
+
+        <g class="node" data-detail="o-viz">
+          <rect x="220" y="100" width="240" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="122" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">Спочатку візуалізуй (графік)</text>
+        </g>
+        <line x1="340" y1="144" x2="340" y2="170" stroke="#999" stroke-width="1.5" marker-end="url(#arrow1)"/>
+
+        <g class="node" data-detail="o-q">
+          <rect x="200" y="170" width="280" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="192" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Видно різкі піки чи провали?</text>
+        </g>
+
+        <line x1="280" y1="214" x2="160" y2="250" stroke="#999" stroke-width="1.5" marker-end="url(#arrow1)"/>
+        <text x="200" y="235" text-anchor="middle" font-size="12" fill="#777">так</text>
+        <line x1="400" y1="214" x2="520" y2="250" stroke="#999" stroke-width="1.5" marker-end="url(#arrow1)"/>
+        <text x="475" y="235" text-anchor="middle" font-size="12" fill="#777">не зрозуміло</text>
+
+        <g class="node" data-detail="o-iqr" data-color="var(--accent-coral)">
+          <rect x="40" y="250" width="240" height="56" rx="8" fill="var(--accent-coral-bg)" stroke="var(--accent-coral)" stroke-width="0.75"/>
+          <text x="160" y="270" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-coral)">Метод IQR</text>
+          <text x="160" y="290" text-anchor="middle" dominant-baseline="central" font-size="12" fill="var(--accent-coral)" opacity="0.85">межі: Q1−1.5·IQR / Q3+1.5·IQR</text>
+        </g>
+
+        <g class="node" data-detail="o-z" data-color="var(--accent-coral)">
+          <rect x="400" y="250" width="240" height="56" rx="8" fill="var(--accent-coral-bg)" stroke="var(--accent-coral)" stroke-width="0.75"/>
+          <text x="520" y="270" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-coral)">Метод Z-score</text>
+          <text x="520" y="290" text-anchor="middle" dominant-baseline="central" font-size="12" fill="var(--accent-coral)" opacity="0.85">викид, якщо |Z| &gt; 3</text>
+        </g>
+
+        <text x="160" y="320" text-anchor="middle" font-size="11" fill="#888">стійкий до викидів</text>
+        <text x="520" y="320" text-anchor="middle" font-size="11" fill="#888">чутливий до викидів</text>
+
+        <line x1="160" y1="335" x2="340" y2="365" stroke="#999" stroke-width="1.5" marker-end="url(#arrow1)"/>
+        <line x1="520" y1="335" x2="340" y2="365" stroke="#999" stroke-width="1.5" marker-end="url(#arrow1)"/>
+
+        <g class="node" data-detail="o-found">
+          <rect x="180" y="365" width="320" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="387" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">Викид знайдено — що далі?</text>
+        </g>
+
+        <line x1="280" y1="409" x2="160" y2="445" stroke="#999" stroke-width="1.5" marker-end="url(#arrow1)"/>
+        <text x="190" y="430" text-anchor="middle" font-size="11" fill="#777">це помилка даних</text>
+        <line x1="400" y1="409" x2="520" y2="445" stroke="#999" stroke-width="1.5" marker-end="url(#arrow1)"/>
+        <text x="500" y="430" text-anchor="middle" font-size="11" fill="#777">реальна подія</text>
+
+        <g class="node" data-detail="o-remove" data-color="var(--accent-red)">
+          <rect x="40" y="445" width="240" height="50" rx="8" fill="var(--accent-red-bg)" stroke="var(--accent-red)" stroke-width="0.75"/>
+          <text x="160" y="463" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-red)">Видалити / виправити</text>
+          <text x="160" y="481" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-red)" opacity="0.85">не впливає на висновки</text>
+        </g>
+
+        <g class="node" data-detail="o-keep" data-color="var(--accent-green)">
+          <rect x="400" y="445" width="240" height="50" rx="8" fill="var(--accent-green-bg)" stroke="var(--accent-green)" stroke-width="0.75"/>
+          <text x="520" y="463" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-green)">Залишити й пояснити</text>
+          <text x="520" y="481" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-green)" opacity="0.85">враховувати у прогнозах</text>
+        </g>
+      </svg>
+    </div>
+    <p class="hint">клікни на блок схеми</p>
+
+    <div class="detail-panel" id="panel-o-start"><div class="detail-inner">
+      <h3>Початкова точка</h3>
+      <p>Будь-яка обробка викидів починається з сирого набору даних — до будь-яких висновків чи моделей.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-o-viz"><div class="detail-inner">
+      <h3>Графічна перевірка</h3>
+      <p>Лінійний графік або scatterplot (<code>seaborn.lineplot</code>) — найшвидший спосіб побачити аномалію оком, перш ніж рахувати щось статистично.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-o-q"><div class="detail-inner">
+      <h3>Оцінка візуального результату</h3>
+      <p>Якщо аномалія очевидна на графіку — переходь одразу до методу, що відповідає природі даних. Якщо неочевидно — застосуй обидва статистичні методи для перевірки.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-o-iqr"><div class="detail-inner" style="--detail-color:var(--accent-coral)">
+      <h3>Метод IQR</h3>
+      <p>Базується на квартилях, тому стійкий до екстремальних значень. Добре працює навіть коли розподіл не нормальний.</p>
+      <p><code>lower = Q1 - 1.5*IQR; upper = Q3 + 1.5*IQR</code></p>
+    </div></div>
+    <div class="detail-panel" id="panel-o-z"><div class="detail-inner" style="--detail-color:var(--accent-coral)">
+      <h3>Метод Z-score</h3>
+      <p>Використовує середнє і стандартне відхилення — тому сам по собі чутливий до викидів (вони ж впливають на середнє). Найкраще підходить для приблизно нормальних даних.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-o-found"><div class="detail-inner">
+      <h3>Що робити з викидом</h3>
+      <p>Не видаляй автоматично. Спочатку з'ясуй причину: помилка вводу даних чи реальна подія (акція, свято, збій сервера).</p>
+    </div></div>
+    <div class="detail-panel" id="panel-o-remove"><div class="detail-inner" style="--detail-color:var(--accent-red)">
+      <h3>Видалити / виправити</h3>
+      <p>Якщо це технічна помилка (наприклад, від'ємна ціна або дублікат) — виправ або прибери з вибірки, щоб не спотворювати середнє та стандартне відхилення.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-o-keep"><div class="detail-inner" style="--detail-color:var(--accent-green)">
+      <h3>Залишити й пояснити</h3>
+      <p>Якщо викид відображає реальний процес — залиш його, але врахуй окремо в прогнозах і моделях, бо він суттєво впливає на точність.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 2: SAMPLING ============ -->
+<section class="scheme" id="s2">
+  <div class="wrap">
+    <div class="scheme-head">
+      <span class="scheme-num">02</span>
+      <h2>Методи формування вибірки</h2>
+    </div>
+    <p class="scheme-desc">Який метод семплування обрати залежно від структури популяції.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 680 480">
+        <defs><marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+        <g class="node" data-detail="s-start">
+          <rect x="220" y="30" width="240" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="52" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">Велика популяція даних</text>
+        </g>
+        <line x1="340" y1="74" x2="340" y2="100" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+        <g class="node" data-detail="s-q">
+          <rect x="160" y="100" width="360" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="122" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Чи є природні групи / структура в даних?</text>
+        </g>
+
+        <line x1="220" y1="144" x2="100" y2="180" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="120" y="168" text-anchor="middle" font-size="11" fill="#777">немає</text>
+        <line x1="300" y1="144" x2="280" y2="180" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="270" y="168" text-anchor="middle" font-size="11" fill="#777">категорії</text>
+        <line x1="420" y1="144" x2="470" y2="180" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="475" y="168" text-anchor="middle" font-size="11" fill="#777">впорядкований ряд</text>
+        <line x1="500" y1="144" x2="620" y2="180" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="600" y="168" text-anchor="middle" font-size="11" fill="#777">регіони</text>
+
+        <g class="node" data-detail="s-random" data-color="var(--accent-teal)">
+          <rect x="20" y="180" width="160" height="56" rx="8" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="100" y="200" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-teal)">Простий випадковий</text>
+          <text x="100" y="220" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-teal)" opacity="0.85">.sample(n=...)</text>
+        </g>
+
+        <g class="node" data-detail="s-strat" data-color="var(--accent-teal)">
+          <rect x="195" y="180" width="160" height="56" rx="8" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="275" y="200" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-teal)">Стратифікований</text>
+          <text x="275" y="220" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-teal)" opacity="0.85">.groupby().sample()</text>
+        </g>
+
+        <g class="node" data-detail="s-sys" data-color="var(--accent-teal)">
+          <rect x="370" y="180" width="160" height="56" rx="8" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="450" y="200" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-teal)">Систематичний</text>
+          <text x="450" y="220" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-teal)" opacity="0.85">.iloc[::n]</text>
+        </g>
+
+        <g class="node" data-detail="s-cluster" data-color="var(--accent-teal)">
+          <rect x="545" y="180" width="135" height="56" rx="8" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="612" y="200" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-teal)">Кластерний</text>
+          <text x="612" y="220" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-teal)" opacity="0.85">obrati regions</text>
+        </g>
+
+        <line x1="100" y1="236" x2="340" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <line x1="275" y1="236" x2="340" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <line x1="450" y1="236" x2="340" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <line x1="612" y1="236" x2="340" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+        <g class="node" data-detail="s-small">
+          <rect x="200" y="280" width="280" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="302" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Вибірка мала / розподіл невідомий?</text>
+        </g>
+
+        <line x1="280" y1="324" x2="220" y2="365" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="225" y="348" text-anchor="middle" font-size="11" fill="#777">ні</text>
+        <line x1="400" y1="324" x2="460" y2="365" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="470" y="348" text-anchor="middle" font-size="11" fill="#777">так</text>
+
+        <g class="node" data-detail="s-done" data-color="var(--accent-green)">
+          <rect x="80" y="365" width="280" height="50" rx="8" fill="var(--accent-green-bg)" stroke="var(--accent-green)" stroke-width="0.75"/>
+          <text x="220" y="383" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-green)">Вибірка готова до аналізу</text>
+          <text x="220" y="401" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-green)" opacity="0.85">переходь до кроку «надійність»</text>
+        </g>
+
+        <g class="node" data-detail="s-bootstrap" data-color="var(--accent-purple)">
+          <rect x="380" y="365" width="280" height="50" rx="8" fill="var(--accent-purple-bg)" stroke="var(--accent-purple)" stroke-width="0.75"/>
+          <text x="520" y="383" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-purple)">Bootstrap-метод</text>
+          <text x="520" y="401" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-purple)" opacity="0.85">повторна вибірка із заміщенням</text>
+        </g>
+
+        <text x="340" y="448" text-anchor="middle" font-size="11" fill="#888" font-family="monospace">обидва шляхи ведуть до оцінки довірчого інтервалу</text>
+      </svg>
+    </div>
+    <p class="hint">клікни на блок схеми</p>
+
+    <div class="detail-panel" id="panel-s-start"><div class="detail-inner">
+      <h3>Велика популяція</h3>
+      <p>Якщо аналізувати весь набір даних дорого чи довго — вибираєш репрезентативну вибірку замість усієї популяції.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-q"><div class="detail-inner">
+      <h3>Структура популяції визначає метод</h3>
+      <p>Перш ніж обирати техніку семплування, з'ясуй: чи дані однорідні, чи поділені на категорії, чи мають природний порядок, чи розкидані по регіонах/кластерах.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-random"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Простий випадковий вибір</h3>
+      <p>Кожен елемент має однакову ймовірність потрапити у вибірку. Найпростіший варіант, коли немає сенсу ділити дані на групи.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-strat"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Стратифікована вибірка</h3>
+      <p>Дані діляться на групи (страти) за ознакою — наприклад, категорія товару — і з кожної береться однакова кількість елементів.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-sys"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Систематична вибірка</h3>
+      <p>Береться кожен n-й елемент послідовності. Зручно для впорядкованих за часом даних (наприклад, кожна 10-та транзакція).</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-cluster"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Кластерна вибірка</h3>
+      <p>Популяція ділиться на кластери (наприклад, регіони), і кілька цілих кластерів вибираються випадково для повного аналізу.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-small"><div class="detail-inner">
+      <h3>Перевір розмір та розподіл</h3>
+      <p>Якщо вибірка мала або форма розподілу популяції невідома — стандартні формули можуть бути неточними. Тоді на допомогу приходить bootstrap.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-done"><div class="detail-inner" style="--detail-color:var(--accent-green)">
+      <h3>Готово до аналізу</h3>
+      <p>Якщо вибірка достатньо велика і репрезентативна — можна одразу переходити до оцінки довірчих інтервалів і значущості.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-bootstrap"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>Bootstrap</h3>
+      <p>Багаторазова вибірка із заміщенням із наявних даних. Для кожної підвибірки рахуєш статистику (середнє, медіану) — отримуєш розподіл оцінок, навіть не знаючи справжній розподіл популяції.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 3: NORMALITY & SIGNIFICANCE ============ -->
+<section class="scheme" id="s3">
+  <div class="wrap">
+    <div class="scheme-head">
+      <span class="scheme-num">03</span>
+      <h2>Нормальність, довірчий інтервал та p-value</h2>
+    </div>
+    <p class="scheme-desc">Перевірка нормальності визначає, які тести можна застосовувати далі.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 680 460">
+        <defs><marker id="arrow3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+        <g class="node" data-detail="n-start">
+          <rect x="220" y="30" width="240" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="52" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">Маю вибірку даних</text>
+        </g>
+        <line x1="340" y1="74" x2="340" y2="100" stroke="#999" stroke-width="1.5" marker-end="url(#arrow3)"/>
+
+        <g class="node" data-detail="n-size">
+          <rect x="180" y="100" width="320" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="122" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Розмір вибірки великий чи малий?</text>
+        </g>
+
+        <line x1="260" y1="144" x2="160" y2="180" stroke="#999" stroke-width="1.5" marker-end="url(#arrow3)"/>
+        <text x="180" y="168" text-anchor="middle" font-size="11" fill="#777">великий</text>
+        <line x1="420" y1="144" x2="520" y2="180" stroke="#999" stroke-width="1.5" marker-end="url(#arrow3)"/>
+        <text x="500" y="168" text-anchor="middle" font-size="11" fill="#777">малий</text>
+
+        <g class="node" data-detail="n-dagostino" data-color="var(--accent-blue)">
+          <rect x="40" y="180" width="240" height="44" rx="8" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="160" y="202" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-blue)">тест Д'Агостіно-Пірсона</text>
+        </g>
+
+        <g class="node" data-detail="n-shapiro" data-color="var(--accent-blue)">
+          <rect x="400" y="180" width="240" height="44" rx="8" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="520" y="202" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-blue)">тест Шапіро-Уілка</text>
+        </g>
+
+        <line x1="160" y1="224" x2="340" y2="260" stroke="#999" stroke-width="1.5" marker-end="url(#arrow3)"/>
+        <line x1="520" y1="224" x2="340" y2="260" stroke="#999" stroke-width="1.5" marker-end="url(#arrow3)"/>
+
+        <g class="node" data-detail="n-pvalue">
+          <rect x="200" y="260" width="280" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="282" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">p-value тесту нормальності</text>
+        </g>
+
+        <line x1="260" y1="304" x2="160" y2="340" stroke="#999" stroke-width="1.5" marker-end="url(#arrow3)"/>
+        <text x="190" y="328" text-anchor="middle" font-size="11" fill="#777">≥ 0.05</text>
+        <line x1="420" y1="304" x2="520" y2="340" stroke="#999" stroke-width="1.5" marker-end="url(#arrow3)"/>
+        <text x="500" y="328" text-anchor="middle" font-size="11" fill="#777">&lt; 0.05</text>
+
+        <g class="node" data-detail="n-normal" data-color="var(--accent-green)">
+          <rect x="40" y="340" width="240" height="50" rx="8" fill="var(--accent-green-bg)" stroke="var(--accent-green)" stroke-width="0.75"/>
+          <text x="160" y="358" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-green)">Розподіл нормальний</text>
+          <text x="160" y="376" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-green)" opacity="0.85">можна Пірсона, t-тести</text>
+        </g>
+
+        <g class="node" data-detail="n-nonnormal" data-color="var(--accent-amber)">
+          <rect x="400" y="340" width="240" height="50" rx="8" fill="var(--accent-amber-bg)" stroke="var(--accent-amber)" stroke-width="0.75"/>
+          <text x="520" y="358" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-amber)">Розподіл ненормальний</text>
+          <text x="520" y="376" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-amber)" opacity="0.85">непараметричні методи, Спірмен</text>
+        </g>
+
+        <text x="340" y="425" text-anchor="middle" font-size="11" fill="#888" font-family="monospace">той самий принцип p &lt; 0.05 діє для будь-якого тесту значущості</text>
+      </svg>
+    </div>
+    <p class="hint">клікни на блок схеми</p>
+
+    <div class="detail-panel" id="panel-n-start"><div class="detail-inner">
+      <h3>Початкова точка</h3>
+      <p>Перш ніж застосовувати статистичні тести (кореляція, t-тест, A/B), варто знати, чи дані розподілені нормально.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-n-size"><div class="detail-inner">
+      <h3>Розмір вибірки визначає тест</h3>
+      <p>Тест Д'Агостіно-Пірсона потужніший на великих вибірках. Шапіро-Уілк надійніший саме на малих вибірках.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-n-dagostino"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Тест Д'Агостіно-Пірсона</h3>
+      <p><code>scipy.stats.normaltest()</code> — перевіряє кілька критеріїв симетрії розподілу одночасно.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-n-shapiro"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Тест Шапіро-Уілка</h3>
+      <p><code>scipy.stats.shapiro()</code> — краще підходить для невеликих вибірок.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-n-pvalue"><div class="detail-inner">
+      <h3>Інтерпретація p-value тесту нормальності</h3>
+      <p>Нульова гіпотеза обох тестів: «вибірка взята з нормального розподілу». p-value показує, чи варто цю гіпотезу відхиляти.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-n-normal"><div class="detail-inner" style="--detail-color:var(--accent-green)">
+      <h3>Розподіл нормальний</h3>
+      <p>p ≥ 0.05 — немає підстав відхиляти гіпотезу про нормальність. Можна застосовувати параметричні методи: кореляцію Пірсона, t-тести.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-n-nonnormal"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
+      <h3>Розподіл ненормальний</h3>
+      <p>p &lt; 0.05 — розподіл відхиляється від нормального. Краще використовувати непараметричні альтернативи: кореляцію Спірмена або Кендалла.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ SECTION 4: CORRELATION ============ -->
+<section class="scheme" id="s4">
+  <div class="wrap">
+    <div class="scheme-head">
+      <span class="scheme-num">04</span>
+      <h2>Вибір методу кореляції</h2>
+    </div>
+    <p class="scheme-desc">Тип даних і наявність аномалій визначають коефіцієнт; p-value визначає, чи довіряти результату.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 680 540">
+        <defs><marker id="arrow4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+        <g class="node" data-detail="c-start">
+          <rect x="220" y="30" width="240" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="52" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">Потрібно знайти кореляцію</text>
+        </g>
+        <line x1="340" y1="74" x2="340" y2="100" stroke="#999" stroke-width="1.5" marker-end="url(#arrow4)"/>
+
+        <g class="node" data-detail="c-q1">
+          <rect x="160" y="100" width="360" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="122" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Дані кількісні, неперервні, нормальний розподіл?</text>
+        </g>
+
+        <line x1="240" y1="144" x2="120" y2="190" stroke="#999" stroke-width="1.5" marker-end="url(#arrow4)"/>
+        <text x="150" y="170" text-anchor="middle" font-size="11" fill="#777">так</text>
+        <line x1="440" y1="144" x2="560" y2="190" stroke="#999" stroke-width="1.5" marker-end="url(#arrow4)"/>
+        <text x="530" y="170" text-anchor="middle" font-size="11" fill="#777">ні</text>
+
+        <g class="node" data-detail="c-pearson" data-color="var(--accent-blue)">
+          <rect x="20" y="190" width="200" height="56" rx="8" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="120" y="210" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-blue)">Пірсон (pearsonr)</text>
+          <text x="120" y="230" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-blue)" opacity="0.85">лінійний зв'язок</text>
+        </g>
+
+        <g class="node" data-detail="c-q2">
+          <rect x="440" y="190" width="240" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="560" y="212" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#555">Є викиди / аномалії в ранжуванні?</text>
+        </g>
+
+        <line x1="500" y1="234" x2="450" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrow4)"/>
+        <text x="430" y="260" text-anchor="middle" font-size="11" fill="#777">ні</text>
+        <line x1="620" y1="234" x2="640" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrow4)"/>
+        <text x="650" y="260" text-anchor="middle" font-size="11" fill="#777">так</text>
+
+        <g class="node" data-detail="c-spearman" data-color="var(--accent-teal)">
+          <rect x="340" y="280" width="220" height="56" rx="8" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="450" y="300" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-teal)">Спірмен (spearmanr)</text>
+          <text x="450" y="320" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-teal)" opacity="0.85">монотонний / ранговий зв'язок</text>
+        </g>
+
+        <g class="node" data-detail="c-kendall" data-color="var(--accent-purple)">
+          <rect x="540" y="280" width="220" height="56" rx="8" fill="var(--accent-purple-bg)" stroke="var(--accent-purple)" stroke-width="0.75"/>
+          <text x="640" y="300" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-purple)">Кендалл (kendalltau)</text>
+          <text x="640" y="320" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-purple)" opacity="0.85">стійкий до аномалій</text>
+        </g>
+
+        <line x1="120" y1="246" x2="120" y2="380" stroke="#999" stroke-width="1.5" marker-end="url(#arrow4)"/>
+        <line x1="450" y1="336" x2="280" y2="380" stroke="#999" stroke-width="1.5" marker-end="url(#arrow4)"/>
+        <line x1="640" y1="336" x2="400" y2="380" stroke="#999" stroke-width="1.5" marker-end="url(#arrow4)"/>
+
+        <g class="node" data-detail="c-pcheck">
+          <rect x="120" y="380" width="400" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="320" y="402" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">Перевір p-value тесту значущості</text>
+        </g>
+
+        <line x1="220" y1="424" x2="160" y2="460" stroke="#999" stroke-width="1.5" marker-end="url(#arrow4)"/>
+        <text x="160" y="448" text-anchor="middle" font-size="11" fill="#777">p ≥ 0.05</text>
+        <line x1="420" y1="424" x2="480" y2="460" stroke="#999" stroke-width="1.5" marker-end="url(#arrow4)"/>
+        <text x="480" y="448" text-anchor="middle" font-size="11" fill="#777">p &lt; 0.05</text>
+
+        <g class="node" data-detail="c-notsig">
+          <rect x="40" y="460" width="240" height="50" rx="8" fill="#F1EFE8" stroke="#888" stroke-width="0.75"/>
+          <text x="160" y="478" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#555">Зв'язок не значущий</text>
+          <text x="160" y="496" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#777">ігноруємо величину кореляції</text>
+        </g>
+
+        <g class="node" data-detail="c-sig" data-color="var(--accent-green)">
+          <rect x="360" y="460" width="240" height="50" rx="8" fill="var(--accent-green-bg)" stroke="var(--accent-green)" stroke-width="0.75"/>
+          <text x="480" y="478" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-green)">Зв'язок значущий</text>
+          <text x="480" y="496" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-green)" opacity="0.85">оцінюємо силу та напрямок</text>
+        </g>
+      </svg>
+    </div>
+    <p class="hint">клікни на блок схеми</p>
+
+    <div class="detail-panel" id="panel-c-start"><div class="detail-inner">
+      <h3>Початкова точка</h3>
+      <p>Кореляція вимірює і силу, і напрямок зв'язку між двома змінними — від −1 до +1.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-c-q1"><div class="detail-inner">
+      <h3>Перевір тип даних</h3>
+      <p>Це ключове розгалуження. Пірсон підходить лише для неперервних, нормально розподілених кількісних даних.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-c-pearson"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Коефіцієнт Пірсона</h3>
+      <p>Вимірює лінійний зв'язок. +1 — ідеальна позитивна кореляція, −1 — ідеальна негативна, 0 — відсутність зв'язку.</p>
+      <p><code>scipy.stats.pearsonr(x, y)</code></p>
+    </div></div>
+    <div class="detail-panel" id="panel-c-q2"><div class="detail-inner">
+      <h3>Перевір наявність аномалій</h3>
+      <p>Якщо в ранжованих/непараметричних даних є екстремальні значення — Кендалл стійкіший за Спірмена.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-c-spearman"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Коефіцієнт Спірмена</h3>
+      <p>Вимірює монотонний (не обов'язково лінійний) зв'язок. Підходить для рангових або ненормально розподілених кількісних даних.</p>
+      <p><code>scipy.stats.spearmanr(x, y)</code></p>
+    </div></div>
+    <div class="detail-panel" id="panel-c-kendall"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>Коефіцієнт Кендалла</h3>
+      <p>Теж рангова кореляція, але стійкіша до аномалій, ніж Спірмен. Якщо значення Кендалла менше за Спірмена — зв'язок ближче до лінійного.</p>
+      <p><code>scipy.stats.kendalltau(x, y)</code></p>
+    </div></div>
+    <div class="detail-panel" id="panel-c-pcheck"><div class="detail-inner">
+      <h3>Перевірка значущості — обов'язковий крок</h3>
+      <p>Сама величина коефіцієнта нічого не означає без перевірки p-value. Високий коефіцієнт на малій вибірці може бути випадковістю.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-c-notsig"><div class="detail-inner">
+      <h3>Зв'язок не значущий</h3>
+      <p>p ≥ 0.05 — недостатньо доказів відхилити нульову гіпотезу (r = 0). Навіть якщо коефіцієнт виглядає великим, не варто робити висновки про зв'язок.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-c-sig"><div class="detail-inner" style="--detail-color:var(--accent-green)">
+      <h3>Зв'язок значущий</h3>
+      <p>p &lt; 0.05 — є підстави відхилити нульову гіпотезу. Тепер має сенс інтерпретувати силу й напрямок коефіцієнта кореляції.</p>
+    </div></div>
+  </div>
+</section>
+
+<footer>
+  складено на основі лекційного матеріалу з аналізу даних
+</footer>
+
+<script>
+document.querySelectorAll('.node').forEach(function(node){
+  node.addEventListener('click', function(){
+    var id = node.getAttribute('data-detail');
+    var color = node.getAttribute('data-color');
+    var panel = document.getElementById('panel-' + id);
+    if(!panel) return;
+
+    var wasOpen = panel.classList.contains('open');
+
+    // close all panels within the same section
+    var section = node.closest('section');
+    section.querySelectorAll('.detail-panel.open').forEach(function(p){
+      p.classList.remove('open');
+    });
+
+    if(!wasOpen){
+      if(color){ panel.querySelector('.detail-inner').style.setProperty('--detail-color', color); }
+      panel.classList.add('open');
+      setTimeout(function(){
+        panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+      }, 200);
+    }
+  });
+});
+</script>
+
+</body>
+</html>

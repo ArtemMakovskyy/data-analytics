@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Наскрізний пайплайн статистичного аналізу</title>
+<style>
+  :root{
+    --bg:#F6F4EF;
+    --ink:#1F2421;
+    --ink-soft:#5B6059;
+    --line:#D8D4C8;
+    --card:#FFFFFF;
+
+    --c-blue:#2F5D8A;     --c-blue-bg:#E6F0F8;
+    --c-coral:#B5562F;    --c-coral-bg:#FBEBE2;
+    --c-teal:#1E7A63;     --c-teal-bg:#E2F2EC;
+    --c-purple:#5B4B8A;   --c-purple-bg:#ECE8F6;
+    --c-amber:#9A6B16;    --c-amber-bg:#FAF0DB;
+    --c-green:#3B7A23;    --c-green-bg:#EBF4E3;
+    --c-red:#A23A2E;      --c-red-bg:#F8E5E2;
+    --c-pink:#A23A6B;     --c-pink-bg:#FBEAF0;
+    --c-gray:#5B5E59;     --c-gray-bg:#F1EFE8;
+
+    --mono:'SF Mono', 'JetBrains Mono', Consolas, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    line-height:1.5;
+    padding-bottom:100px;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 24px;}
+
+  header.top{
+    padding:60px 24px 36px;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 14px;
+  }
+  h1{
+    font-family:Georgia,'Times New Roman',serif;
+    font-weight:400;
+    font-size:clamp(28px,4.5vw,42px);
+    line-height:1.1;
+    margin:0 0 14px;
+    letter-spacing:-0.01em;
+  }
+  h1 em{font-style:italic;color:var(--c-coral);}
+  .sub{font-size:16px;color:var(--ink-soft);max-width:600px;margin:0 0 24px;}
+
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 16px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  /* ============ PIPELINE ============ */
+  .pipeline{
+    position:relative;
+    padding:48px 24px 0;
+    max-width:880px;
+    margin:0 auto;
+  }
+  .rail{
+    position:absolute;
+    left:50px;
+    top:48px;
+    bottom:80px;
+    width:2px;
+    background:var(--line);
+  }
+  @media (max-width:680px){ .rail{left:28px;} }
+
+  .step{
+    position:relative;
+    padding-left:96px;
+    margin-bottom:8px;
+  }
+  @media (max-width:680px){ .step{padding-left:58px;} }
+
+  .step-num{
+    position:absolute;
+    left:50px;
+    top:0;
+    transform:translateX(-50%);
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:var(--card);
+    border:2px solid var(--ink-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:var(--mono);
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-soft);
+    z-index:2;
+  }
+  @media (max-width:680px){ .step-num{left:28px;width:28px;height:28px;font-size:11px;} }
+
+  .step-num.decision{
+    border-style:dashed;
+  }
+
+  .card{
+    cursor:pointer;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 20px;
+    margin-bottom:18px;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .card:hover{
+    border-color:var(--card-accent, var(--ink-soft));
+    box-shadow:0 2px 10px rgba(0,0,0,0.04);
+  }
+  .card.action{
+    background:var(--card-bg, var(--c-blue-bg));
+    border-color:var(--card-accent, var(--c-blue));
+  }
+
+  .card-title{
+    font-size:15px;
+    font-weight:600;
+    margin:0 0 4px;
+    color:var(--card-accent-text, var(--ink));
+  }
+  .card-sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0;
+  }
+  .card.action .card-sub{ color:var(--card-accent-text, var(--ink-soft)); opacity:.85; }
+
+  .chevron{
+    float:right;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-soft);
+    transition:transform .2s;
+  }
+  .card.open .chevron{transform:rotate(90deg);}
+
+  .detail{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+  }
+  .detail.open{max-height:400px; margin-top:12px;}
+  .detail-inner{
+    border-top:1px solid var(--line);
+    padding-top:12px;
+    font-size:14px;
+    color:var(--ink);
+  }
+  .detail-inner p{margin:0 0 8px;}
+  .detail-inner p:last-child{margin-bottom:0;}
+  .detail-inner code{
+    font-family:var(--mono);
+    background:rgba(0,0,0,0.05);
+    padding:1px 6px;
+    border-radius:4px;
+    font-size:12.5px;
+  }
+  .why{
+    display:grid;
+    grid-template-columns:78px 1fr;
+    gap:3px 10px;
+    margin:0 0 9px;
+    align-items:baseline;
+  }
+  .why:last-child{margin-bottom:0;}
+  .why .lbl{
+    font-family:var(--mono);
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:var(--detail-color, var(--ink-soft));
+    opacity:.8;
+    padding-top:2px;
+  }
+  .why p{margin:0; font-size:14px;}
+
+  /* Decision (diamond-style) node — branches shown as two side-by-side mini cards */
+  .decision-label{
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin:0 0 12px;
+    font-style:italic;
+  }
+  .branches{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  @media (max-width:560px){ .branches{grid-template-columns:1fr;} }
+  .branches.three{grid-template-columns:1fr 1fr 1fr;}
+  @media (max-width:680px){ .branches.three{grid-template-columns:1fr;} }
+  .branches.four{grid-template-columns:repeat(4,1fr);}
+  @media (max-width:760px){ .branches.four{grid-template-columns:1fr 1fr;} }
+  @media (max-width:480px){ .branches.four{grid-template-columns:1fr;} }
+
+  .branch-tag{
+    font-family:var(--mono);
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+    display:block;
+  }
+
+  .merge-note{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin:4px 0 18px;
+  }
+
+  /* Section divider within pipeline */
+  .phase-divider{
+    padding-left:96px;
+    margin:36px 0 18px;
+  }
+  @media (max-width:680px){ .phase-divider{padding-left:58px;} }
+  .phase-divider .tag{
+    font-family:var(--mono);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--ink-soft);
+    border-bottom:1px solid var(--line);
+    padding-bottom:6px;
+    display:block;
+  }
+
+  .end-cap{
+    position:absolute;
+    left:50px;
+    transform:translateX(-50%);
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--ink-soft);
+    z-index:2;
+  }
+  @media (max-width:680px){ .end-cap{left:28px;} }
+
+  footer{
+    padding:40px 24px 20px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13px;
+    font-family:var(--mono);
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Наскрізний пайплайн · 7 кроків</p>
+    <h1>Від <em>сирих даних</em> до бізнес-рішення</h1>
+    <p class="sub">Один безперервний шлях: кожен крок веде до наступного. Клікай на будь-яку картку, щоб розкрити пояснення логіки.</p>
+    <div class="legend">
+      <span><i style="background:var(--c-blue)"></i>метрики / тести</span>
+      <span><i style="background:var(--c-coral)"></i>викиди</span>
+      <span><i style="background:var(--c-teal)"></i>вибірка</span>
+      <span><i style="background:var(--c-purple)"></i>надійність</span>
+      <span><i style="background:var(--c-pink)"></i>кореляція</span>
+      <span><i style="background:var(--c-green)"></i>позитивний висновок</span>
+      <span><i style="background:var(--c-gray)"></i>нейтральний / негативний висновок</span>
+    </div>
+  </div>
+</header>
+
+<div class="pipeline">
+  <div class="rail"></div>
+
+  <!-- START -->
+  <div class="step">
+    <div class="step-num">●</div>
+    <div class="card" data-detail="start" style="--card-accent:var(--ink-soft)">
+      <p class="card-title">Вхідний масив даних<span class="chevron">›</span></p>
+      <p class="card-sub">точка відліку аналізу</p>
+    </div>
+    <div class="detail" id="d-start"><div class="detail-inner">
+      <div class="why"><span class="lbl">що це</span><p>Будь-який датасет перед обробкою: продажі, ціни, замовлення тощо.</p></div>
+      <div class="why"><span class="lbl">чому важливо</span><p>Сирі дані майже завжди містять шум — помилки введення, дублікати, аномалії. Без перевірки висновки будуть ненадійними.</p></div>
+      <div class="why"><span class="lbl">що робити</span><p>Перш ніж рахувати середнє чи робити прогноз — пройти весь шлях нижче: розподіл → викиди → вибірка → надійність.</p></div>
+    </div></div>
+  </div>
+
+  <!-- PHASE: distribution -->
+  <div class="phase-divider"><span class="tag">Фаза 1 · опис розподілу</span></div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="card" data-detail="step1" style="--card-accent:var(--c-blue)">
+      <p class="card-title">Розрахунок Range, IQR, Std Dev<span class="chevron">›</span></p>
+      <p class="card-sub">базове уявлення про розкид даних</p>
+    </div>
+    <div class="detail" id="d-step1"><div class="detail-inner">
+      <div class="why"><span class="lbl">теза</span><p><code>Range = max − min</code> — найпростіша оцінка розкиду, але чутлива до викидів. <code>IQR = Q3 − Q1</code> — стійкіша, бо охоплює лише середні 50% даних. <code>Std Dev</code> враховує всі точки одночасно.</p></div>
+      <div class="why"><span class="lbl">чому важливо</span><p>Якщо Range набагато більший за IQR — це сигнал, що в даних, ймовірно, є екстремальні значення, які варто перевірити окремо на наступному кроці.</p></div>
+      <div class="why"><span class="lbl">що робити</span><p>Рахуй усі три метрики одразу — вони дають взаємодоповнюючу картину розкиду перед пошуком конкретних викидів.</p></div>
+    </div></div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="card" data-detail="step2" style="--card-accent:var(--c-blue)">
+      <p class="card-title">Графічна перевірка<span class="chevron">›</span></p>
+      <p class="card-sub">lineplot / scatterplot — оком шукаємо аномалії</p>
+    </div>
+    <div class="detail" id="d-step2"><div class="detail-inner">
+      <div class="why"><span class="lbl">теза</span><p>Око людини помічає різкі стрибки на графіку швидше, ніж будь-яка формула — це найдешевша перевірка перед статистичними тестами.</p></div>
+      <div class="why"><span class="lbl">чому важливо</span><p>Статистичні методи (IQR, Z-score) дають числовий поріг, але не пояснюють контекст: чи це збій сенсора, чи реальний сплеск продажів у святковий день.</p></div>
+      <div class="why"><span class="lbl">що робити</span><p>Побудуй <code>sns.lineplot</code> або scatterplot. Якщо аномалія впадає в очі — переходь до IQR; якщо ні — застосуй Z-score для об'єктивної перевірки.</p></div>
+    </div></div>
+  </div>
+
+  <!-- PHASE: outliers -->
+  <div class="phase-divider"><span class="tag">Фаза 2 · викиди</span></div>
+
+  <div class="step">
+    <div class="step-num decision">?</div>
+    <p class="decision-label" style="padding-top:6px">Видно різкі піки чи провали на графіку?</p>
+    <div class="branches">
+      <div>
+        <span class="branch-tag">так</span>
+        <div class="card action" data-detail="step3a" style="--card-accent:var(--c-coral); --card-bg:var(--c-coral-bg); --card-accent-text:var(--c-coral)">
+          <p class="card-title">Метод IQR<span class="chevron">›</span></p>
+          <p class="card-sub">межі: Q1−1.5·IQR / Q3+1.5·IQR · стійкий до аномалій</p>
+        </div>
+        <div class="detail" id="d-step3a"><div class="detail-inner" style="--detail-color:var(--c-coral)">
+          <div class="why"><span class="lbl">теза</span><p>Усе, що виходить за межі <code>[Q1 − 1.5·IQR, Q3 + 1.5·IQR]</code>, вважається викидом. Метод спирається на квартилі, а не на середнє.</p></div>
+          <div class="why"><span class="lbl">чому важливо</span><p>Квартилі самі по собі стійкі до екстремальних значень, тому межі IQR не «зсуваються» через сам викид — на відміну від методів, що базуються на середньому.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p>Застосовуй, коли розподіл асиметричний, ненормальний або коли на графіку чітко видно аномалію — це найнадійніший базовий метод.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">не зрозуміло</span>
+        <div class="card action" data-detail="step3b" style="--card-accent:var(--c-coral); --card-bg:var(--c-coral-bg); --card-accent-text:var(--c-coral)">
+          <p class="card-title">Метод Z-score<span class="chevron">›</span></p>
+          <p class="card-sub">викид, якщо |Z| &gt; 3 · чутливий до аномалій</p>
+        </div>
+        <div class="detail" id="d-step3b"><div class="detail-inner" style="--detail-color:var(--c-coral)">
+          <div class="why"><span class="lbl">теза</span><p>Z-оцінка показує, на скільки стандартних відхилень точка відстоїть від середнього. Поріг <code>|Z| &gt; 3</code> — типова межа для викиду.</p></div>
+          <div class="why"><span class="lbl">чому важливо</span><p>Сам викид впливає і на середнє, і на стандартне відхилення, тому метод може «приховувати» викид, якщо їх кілька — обережно на малих чи дуже асиметричних вибірках.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p>Використовуй, коли розподіл приблизно нормальний і потрібна швидка об'єктивна оцінка без побудови графіка.</p></div>
+        </div></div>
+      </div>
+    </div>
+    <p class="merge-note">↓ обидві гілки зливаються</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num decision">?</div>
+    <p class="decision-label" style="padding-top:6px">Яка природа виявлених викидів?</p>
+    <div class="branches">
+      <div>
+        <span class="branch-tag">помилка / збій</span>
+        <div class="card action" data-detail="varA" style="--card-accent:var(--c-red); --card-bg:var(--c-red-bg); --card-accent-text:var(--c-red)">
+          <p class="card-title">Видалення викидів<span class="chevron">›</span></p>
+          <p class="card-sub">очищення для точності середнього</p>
+        </div>
+        <div class="detail" id="d-varA"><div class="detail-inner" style="--detail-color:var(--c-red)">
+          <div class="why"><span class="lbl">теза</span><p>Викид, що виник через помилку (від'ємна ціна, дублікат рядка, збій сенсора), робить дані «нечистими» — він не описує реальний процес, а лише шум вимірювання.</p></div>
+          <div class="why"><span class="lbl">чому важливо</span><p>Середнє та стандартне відхилення дуже чутливі до таких значень: навіть одна помилкова точка може суттєво зсунути результат і призвести до хибного висновку чи прогнозу.</p></div>
+          <div class="why"><span class="lbl">як коректно</span><p>Не просто видаляй рядок — спочатку перевір джерело (логи, повторний запит до бази). Якщо це справді помилка — або виправ значення на правильне, або прибери рядок повністю. Не «підрівнюй» значення вручну до межі IQR — це спотворює дисперсію так само, як і викид.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">реальний сплеск / акція</span>
+        <div class="card action" data-detail="varB" style="--card-accent:var(--c-green); --card-bg:var(--c-green-bg); --card-accent-text:var(--c-green)">
+          <p class="card-title">Збереження та ізоляція<span class="chevron">›</span></p>
+          <p class="card-sub">окремий сегмент для аналізу</p>
+        </div>
+        <div class="detail" id="d-varB"><div class="detail-inner" style="--detail-color:var(--c-green)">
+          <div class="why"><span class="lbl">теза</span><p>Якщо викид відображає реальну подію (різдвяний розпродаж, вірусний пост, збій конкурента) — він не «брудні» дані, а важлива інформація про бізнес.</p></div>
+          <div class="why"><span class="lbl">чому важливо</span><p>Видалення такого значення приховує реальну поведінку системи й робить майбутні прогнози сліпими до подібних подій — модель не «знатиме», що такі сплески можливі.</p></div>
+          <div class="why"><span class="lbl">як коректно</span><p>Залиш значення в даних, але познач його окремою категорією (наприклад, прапорцем <code>is_promo</code>). Для базової статистики (середнє, довірчий інтервал) можеш рахувати без цих точок, а для прогнозів — будуй окрему модель або сезонну поправку саме на основі цих сплесків.</p></div>
+        </div></div>
+      </div>
+    </div>
+    <p class="merge-note">↓ обидві гілки зливаються</p>
+  </div>
+
+  <!-- PHASE: sampling -->
+  <div class="phase-divider"><span class="tag">Фаза 3 · вибірка</span></div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="card" data-detail="step4" style="--card-accent:var(--c-teal)">
+      <p class="card-title">Оцінка структури популяції<span class="chevron">›</span></p>
+      <p class="card-sub">чи є групи, порядок, регіони — а не просто «скільки даних»</p>
+    </div>
+    <div class="detail" id="d-step4"><div class="detail-inner">
+      <div class="why"><span class="lbl">теза</span><p>Метод вибірки обирається за <strong>структурою</strong> популяції, а не за її обсягом — обсяг впливає окремо, на потребу в bootstrap (нижче).</p></div>
+      <div class="why"><span class="lbl">чому важливо</span><p>Неправильний метод дає вибірку, яка не репрезентує популяцію: наприклад, простий випадковий вибір може випадково «пропустити» цілу категорію товарів, якщо вона рідкісна.</p></div>
+      <div class="why"><span class="lbl">що робити</span><p>Подивись на дані: чи є в них категорії, часовий порядок чи географія. Відповідь визначить один із чотирьох методів нижче.</p></div>
+    </div></div>
+  </div>
+
+  <div class="step">
+    <div class="step-num decision">?</div>
+    <p class="decision-label" style="padding-top:6px">Яка структура популяції?</p>
+    <div class="branches four">
+      <div>
+        <span class="branch-tag">немає груп</span>
+        <div class="card action" data-detail="branchRandom" style="--card-accent:var(--c-teal); --card-bg:var(--c-teal-bg); --card-accent-text:var(--c-teal)">
+          <p class="card-title">Простий випадковий<span class="chevron">›</span></p>
+          <p class="card-sub">.sample(n=...)</p>
+        </div>
+        <div class="detail" id="d-branchRandom"><div class="detail-inner" style="--detail-color:var(--c-teal)">
+          <div class="why"><span class="lbl">теза</span><p>Кожен елемент має однакову ймовірність потрапити у вибірку — найпростіший спосіб без додаткової логіки.</p></div>
+          <div class="why"><span class="lbl">коли обирати</span><p>Коли популяція однорідна й немає сенсу ділити дані на групи чи зважати на порядок.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">бізнес-групи</span>
+        <div class="card action" data-detail="branchStrat" style="--card-accent:var(--c-teal); --card-bg:var(--c-teal-bg); --card-accent-text:var(--c-teal)">
+          <p class="card-title">Стратифікована<span class="chevron">›</span></p>
+          <p class="card-sub">пропорції з кожної групи</p>
+        </div>
+        <div class="detail" id="d-branchStrat"><div class="detail-inner" style="--detail-color:var(--c-teal)">
+          <div class="why"><span class="lbl">теза</span><p>Дані діляться на страти (категорії товарів, сегменти клієнтів), і з кожної береться пропорційна кількість.</p></div>
+          <div class="why"><span class="lbl">коли обирати</span><p>Коли категорії суттєво відрізняються поведінкою (наприклад, електроніка vs одяг) — простий випадковий вибір міг би їх не врахувати рівномірно.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">впорядкований ряд</span>
+        <div class="card action" data-detail="branchSys" style="--card-accent:var(--c-teal); --card-bg:var(--c-teal-bg); --card-accent-text:var(--c-teal)">
+          <p class="card-title">Систематична<span class="chevron">›</span></p>
+          <p class="card-sub">кожен N-й елемент</p>
+        </div>
+        <div class="detail" id="d-branchSys"><div class="detail-inner" style="--detail-color:var(--c-teal)">
+          <div class="why"><span class="lbl">теза</span><p>Береться кожен N-й елемент послідовності — зручно для даних, впорядкованих за часом.</p></div>
+          <div class="why"><span class="lbl">обережно</span><p>Якщо в даних є прихована періодичність (наприклад, тиждень), крок вибірки може випадково збігтися з нею й спотворити результат.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">дані по регіонах</span>
+        <div class="card action" data-detail="branchCluster" style="--card-accent:var(--c-teal); --card-bg:var(--c-teal-bg); --card-accent-text:var(--c-teal)">
+          <p class="card-title">Кластерна<span class="chevron">›</span></p>
+          <p class="card-sub">вибір цілих кластерів</p>
+        </div>
+        <div class="detail" id="d-branchCluster"><div class="detail-inner" style="--detail-color:var(--c-teal)">
+          <div class="why"><span class="lbl">теза</span><p>Популяція ділиться на кластери (регіони, філії), і кілька кластерів обираються випадково повністю.</p></div>
+          <div class="why"><span class="lbl">коли обирати</span><p>Коли збір даних з усіх кластерів дорогий чи довгий — дешевше обстежити кілька регіонів повністю, ніж по трохи з кожного.</p></div>
+        </div></div>
+      </div>
+    </div>
+    <p class="merge-note">↓ усі гілки зливаються</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num decision">?</div>
+    <p class="decision-label" style="padding-top:6px">Вибірка мала або розподіл популяції невідомий?</p>
+    <div class="branches">
+      <div>
+        <span class="branch-tag">так</span>
+        <div class="card action" data-detail="bootstrap" style="--card-accent:var(--c-purple); --card-bg:var(--c-purple-bg); --card-accent-text:var(--c-purple)">
+          <p class="card-title">Bootstrap-метод<span class="chevron">›</span></p>
+          <p class="card-sub">повторна вибірка із заміщенням — поверх обраного методу</p>
+        </div>
+        <div class="detail" id="d-bootstrap"><div class="detail-inner" style="--detail-color:var(--c-purple)">
+          <div class="why"><span class="lbl">теза</span><p>Не альтернатива методу вибірки вище, а додатковий крок над ним: багаторазово ресемплюємо з заміщенням і рахуємо статистику (середнє, медіану) для кожної підвибірки.</p></div>
+          <div class="why"><span class="lbl">чому важливо</span><p>На малій вибірці звичайні формули довірчого інтервалу спираються на припущення про форму розподілу популяції — припущення, яке часто неможливо перевірити. Bootstrap обходить цю проблему.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p>Згенеруй 1000+ підвибірок із заміщенням, порахуй потрібну статистику для кожної — отримаєш емпіричний розподіл оцінки, з якого вже видно довірчий інтервал.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">ні</span>
+        <div class="card action" data-detail="readyAnalysis" style="--card-accent:var(--c-gray); --card-bg:var(--c-gray-bg); --card-accent-text:var(--c-gray)">
+          <p class="card-title">Вибірка готова до аналізу<span class="chevron">›</span></p>
+          <p class="card-sub">переходимо до оцінки надійності</p>
+        </div>
+        <div class="detail" id="d-readyAnalysis"><div class="detail-inner">
+          <div class="why"><span class="lbl">теза</span><p>Якщо вибірка достатньо велика й репрезентативна, додаткове ресемплювання не потрібне.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p>Переходь одразу до розрахунку довірчого інтервалу класичною формулою — це швидше за bootstrap і дає еквівалентний результат на великих вибірках.</p></div>
+        </div></div>
+      </div>
+    </div>
+    <p class="merge-note">↓ обидві гілки зливаються</p>
+  </div>
+
+  <!-- PHASE: reliability -->
+  <div class="phase-divider"><span class="tag">Фаза 4 · надійність</span></div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="card" data-detail="step5" style="--card-accent:var(--c-purple)">
+      <p class="card-title">Розрахунок довірчого інтервалу середнього<span class="chevron">›</span></p>
+      <p class="card-sub">stats.t.interval()</p>
+    </div>
+    <div class="detail" id="d-step5"><div class="detail-inner">
+      <div class="why"><span class="lbl">теза</span><p>Діапазон, що з заданою ймовірністю (зазвичай 95%) містить істинне середнє популяції — а не лише точкову оцінку з вибірки.</p></div>
+      <div class="why"><span class="lbl">чому важливо</span><p>Точкове середнє (наприклад, $230) створює хибне відчуття точності. Інтервал (наприклад, $208–$240) чесно показує невизначеність оцінки.</p></div>
+      <div class="why"><span class="lbl">що робити</span><p>Використовуй <code>stats.t.interval()</code> з вибірковим середнім, стандартним відхиленням і розміром вибірки — або візьми готовий розподіл із bootstrap.</p></div>
+    </div></div>
+  </div>
+
+  <div class="step">
+    <div class="step-num decision">?</div>
+    <p class="decision-label" style="padding-top:6px">Чи задовольняє ширина інтервалу точність прогнозу?</p>
+    <div class="branches">
+      <div>
+        <span class="branch-tag">ні</span>
+        <div class="card action" data-detail="widenSample" style="--card-accent:var(--c-amber); --card-bg:var(--c-amber-bg); --card-accent-text:var(--c-amber)">
+          <p class="card-title">Збільшити обсяг вибірки<span class="chevron">›</span></p>
+          <p class="card-sub">повернутись на Крок 4</p>
+        </div>
+        <div class="detail" id="d-widenSample"><div class="detail-inner" style="--detail-color:var(--c-amber)">
+          <div class="why"><span class="lbl">теза</span><p>Ширший за потреби інтервал означає недостатню точність оцінки.</p></div>
+          <div class="why"><span class="lbl">чому важливо</span><p>Прийняття бізнес-рішення на основі занадто широкого інтервалу ризиковане — справжнє значення може лежати де завгодно всередині нього.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p>Збільш розмір вибірки (поверни на Крок 4) — ширина довірчого інтервалу зменшується пропорційно <code>1/√n</code>, тож навіть подвоєння вибірки звужує інтервал помітно.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">так</span>
+        <div class="card action" data-detail="fixBounds" style="--card-accent:var(--c-green); --card-bg:var(--c-green-bg); --card-accent-text:var(--c-green)">
+          <p class="card-title">Фіксація базових меж<span class="chevron">›</span></p>
+          <p class="card-sub">готово для A/B-тесту</p>
+        </div>
+        <div class="detail" id="d-fixBounds"><div class="detail-inner" style="--detail-color:var(--c-green)">
+          <div class="why"><span class="lbl">теза</span><p>Інтервал достатньо вузький — оцінка надійна для прийняття рішень.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p>Зафіксуй ці межі як базову лінію (baseline) і переходь до перевірки нормальності, а потім — до A/B-експерименту.</p></div>
+        </div></div>
+      </div>
+    </div>
+    <p class="merge-note">↓</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="card" data-detail="step6" style="--card-accent:var(--c-blue)">
+      <p class="card-title">Тест на нормальність розподілу<span class="chevron">›</span></p>
+      <p class="card-sub">normaltest() — велика вибірка · shapiro() — мала вибірка</p>
+    </div>
+    <div class="detail" id="d-step6"><div class="detail-inner">
+      <div class="why"><span class="lbl">теза</span><p>Велика вибірка → тест Д'Агостіно-Пірсона (потужніший, перевіряє кілька критеріїв симетрії одночасно). Мала вибірка → тест Шапіро-Уілка (надійніший саме на малих даних).</p></div>
+      <div class="why"><span class="lbl">чому важливо</span><p>Багато статистичних тестів далі (Пірсон, t-тест) формально вимагають нормальності розподілу. Застосування їх без перевірки може дати оманливо «значущий» результат.</p></div>
+      <div class="why"><span class="lbl">що робити</span><p>Запусти <code>normaltest()</code> або <code>shapiro()</code> залежно від розміру вибірки й подивись на p-value.</p></div>
+    </div></div>
+  </div>
+
+  <div class="step">
+    <div class="step-num decision">?</div>
+    <p class="decision-label" style="padding-top:6px">Яке p-value тесту нормальності?</p>
+    <div class="branches">
+      <div>
+        <span class="branch-tag">p ≥ 0.05</span>
+        <div class="card action" data-detail="normalDist" style="--card-accent:var(--c-green); --card-bg:var(--c-green-bg); --card-accent-text:var(--c-green)">
+          <p class="card-title">Нормальний розподіл<span class="chevron">›</span></p>
+          <p class="card-sub">можна Пірсона, t-тести</p>
+        </div>
+        <div class="detail" id="d-normalDist"><div class="detail-inner" style="--detail-color:var(--c-green)">
+          <div class="why"><span class="lbl">теза</span><p>Немає підстав відхиляти гіпотезу про нормальність даних.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p>Можна застосовувати параметричні методи: кореляцію Пірсона, t-тести — вони точніші саме на нормальних даних.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">p &lt; 0.05</span>
+        <div class="card action" data-detail="nonNormalDist" style="--card-accent:var(--c-amber); --card-bg:var(--c-amber-bg); --card-accent-text:var(--c-amber)">
+          <p class="card-title">Ненормальний розподіл<span class="chevron">›</span></p>
+          <p class="card-sub">непараметричні методи, Спірмен</p>
+        </div>
+        <div class="detail" id="d-nonNormalDist"><div class="detail-inner" style="--detail-color:var(--c-amber)">
+          <div class="why"><span class="lbl">теза</span><p>Розподіл статистично значуще відхиляється від нормального (наприклад, через асиметрію чи довгий хвіст).</p></div>
+          <div class="why"><span class="lbl">чому важливо</span><p>Параметричні тести на таких даних можуть давати завищену або занижену оцінку значущості.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p>Переходь на непараметричні альтернативи: рангові кореляції (Спірмен, Кендалл) замість Пірсона.</p></div>
+        </div></div>
+      </div>
+    </div>
+    <p class="merge-note">↓ якщо потрібен аналіз зв'язку між змінними</p>
+  </div>
+
+  <!-- PHASE: correlation (optional branch) -->
+  <div class="phase-divider"><span class="tag">Фаза 4.1 · кореляція (за потреби)</span></div>
+
+  <div class="step">
+    <div class="step-num decision">?</div>
+    <p class="decision-label" style="padding-top:6px">Дані кількісні неперервні з нормальним розподілом?</p>
+    <div class="branches">
+      <div>
+        <span class="branch-tag">так</span>
+        <div class="card action" data-detail="corrPearson" style="--card-accent:var(--c-pink); --card-bg:var(--c-pink-bg); --card-accent-text:var(--c-pink)">
+          <p class="card-title">Кореляція Пірсона<span class="chevron">›</span></p>
+          <p class="card-sub">pearsonr() · лінійний зв'язок</p>
+        </div>
+        <div class="detail" id="d-corrPearson"><div class="detail-inner" style="--detail-color:var(--c-pink)">
+          <div class="why"><span class="lbl">теза</span><p>Вимірює лінійний зв'язок: +1 — ідеальна позитивна кореляція, −1 — ідеальна негативна, 0 — відсутність зв'язку.</p></div>
+          <div class="why"><span class="lbl">чому важливо</span><p>Пірсон шукає саме пряму лінію — якщо зв'язок насправді криволінійний, коефіцієнт може показати слабкий зв'язок там, де він насправді сильний.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p><code>scipy.stats.pearsonr(x, y)</code> — і обов'язково перевір p-value перед інтерпретацією величини.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">ні — є аномалії в ранжуванні</span>
+        <div class="card action" data-detail="corrKendall" style="--card-accent:var(--c-pink); --card-bg:var(--c-pink-bg); --card-accent-text:var(--c-pink)">
+          <p class="card-title">Кореляція Кендалла<span class="chevron">›</span></p>
+          <p class="card-sub">kendalltau() · стійкий до аномалій</p>
+        </div>
+        <div class="detail" id="d-corrKendall"><div class="detail-inner" style="--detail-color:var(--c-pink)">
+          <div class="why"><span class="lbl">теза</span><p>Рангова кореляція, стійкіша до викидів, ніж Спірмен, бо аналізує лише порядок пар значень, а не їхню величину.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p><code>scipy.stats.kendalltau(x, y)</code>. Якщо значення Кендалла менше за Спірмена для тих самих даних — зв'язок ближче до лінійного, ніж здається.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">ні — без аномалій</span>
+        <div class="card action" data-detail="corrSpearman" style="--card-accent:var(--c-pink); --card-bg:var(--c-pink-bg); --card-accent-text:var(--c-pink)">
+          <p class="card-title">Кореляція Спірмена<span class="chevron">›</span></p>
+          <p class="card-sub">spearmanr() · монотонний зв'язок</p>
+        </div>
+        <div class="detail" id="d-corrSpearman"><div class="detail-inner" style="--detail-color:var(--c-pink)">
+          <div class="why"><span class="lbl">теза</span><p>Вимірює монотонний (не обов'язково лінійний) зв'язок — підходить для рангових або ненормально розподілених кількісних даних.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p><code>scipy.stats.spearmanr(x, y)</code> — стандартний вибір, якщо Пірсон не підходить, а явних аномалій у ранжуванні немає.</p></div>
+        </div></div>
+      </div>
+    </div>
+    <p class="merge-note">↓ обидві гілки зливаються</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num decision">?</div>
+    <p class="decision-label" style="padding-top:6px">p-value тесту значущості кореляції?</p>
+    <div class="branches">
+      <div>
+        <span class="branch-tag">p ≥ 0.05</span>
+        <div class="card action" data-detail="corrNotSig" style="--card-accent:var(--c-gray); --card-bg:var(--c-gray-bg); --card-accent-text:var(--c-gray)">
+          <p class="card-title">Зв'язок не значущий<span class="chevron">›</span></p>
+          <p class="card-sub">ігноруємо величину r</p>
+        </div>
+        <div class="detail" id="d-corrNotSig"><div class="detail-inner">
+          <div class="why"><span class="lbl">теза</span><p>Недостатньо доказів відхилити нульову гіпотезу про відсутність кореляції (r = 0).</p></div>
+          <div class="why"><span class="lbl">чому важливо</span><p>На малій вибірці навіть великий коефіцієнт (наприклад, 0.9) може виявитись статистичним шумом — класична пастка для нерозбірливого аналізу.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p>Не роби висновків про зв'язок. Якщо можливо — збільш вибірку й перевір ще раз.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">p &lt; 0.05</span>
+        <div class="card action" data-detail="corrSig" style="--card-accent:var(--c-green); --card-bg:var(--c-green-bg); --card-accent-text:var(--c-green)">
+          <p class="card-title">Зв'язок значущий<span class="chevron">›</span></p>
+          <p class="card-sub">оцінюємо силу й напрямок r</p>
+        </div>
+        <div class="detail" id="d-corrSig"><div class="detail-inner" style="--detail-color:var(--c-green)">
+          <div class="why"><span class="lbl">теза</span><p>Є підстави відхилити нульову гіпотезу — зв'язок реальний, не випадковий.</p></div>
+          <div class="why"><span class="lbl">що робити</span><p>Тепер інтерпретуй величину коефіцієнта: ближче до ±1 — сильніший зв'язок, знак показує напрямок (прямий чи обернений).</p></div>
+        </div></div>
+      </div>
+    </div>
+    <p class="merge-note">↓ повертаємось до основного потоку</p>
+  </div>
+
+  <!-- PHASE: experiment -->
+  <div class="phase-divider"><span class="tag">Фаза 5 · експеримент і рішення</span></div>
+
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="card" data-detail="step7" style="--card-accent:var(--c-blue)">
+      <p class="card-title">Проведення експерименту / A/B-тесту<span class="chevron">›</span></p>
+      <p class="card-sub">stats.ttest_ind()</p>
+    </div>
+    <div class="detail" id="d-step7"><div class="detail-inner">
+      <div class="why"><span class="lbl">теза</span><p>Порівнюємо дві групи (наприклад, зі знижкою і без), щоб перевірити, чи різниця між ними реальна, а не випадкова.</p></div>
+      <div class="why"><span class="lbl">чому важливо</span><p>Без формального тесту легко переплутати випадкове коливання продажів зі справжнім ефектом кампанії — і прийняти рішення на основі шуму.</p></div>
+      <div class="why"><span class="lbl">що робити</span><p><code>stats.ttest_ind(group_a, group_b)</code> — отримуєш t-статистику і p-value для подальшої інтерпретації.</p></div>
+    </div></div>
+  </div>
+
+  <div class="step">
+    <div class="step-num decision">?</div>
+    <p class="decision-label" style="padding-top:6px">Яке фінальне p-value тесту значущості?</p>
+    <div class="branches">
+      <div>
+        <span class="branch-tag">p &lt; 0.05</span>
+        <div class="card action" data-detail="effectSig" style="--card-accent:var(--c-green); --card-bg:var(--c-green-bg); --card-accent-text:var(--c-green)">
+          <p class="card-title">Ефект статистично значущий<span class="chevron">›</span></p>
+          <p class="card-sub">→ затвердити зміни</p>
+        </div>
+        <div class="detail" id="d-effectSig"><div class="detail-inner" style="--detail-color:var(--c-green)">
+          <div class="why"><span class="lbl">теза</span><p>p &lt; 0.05 — лише 5% (або менше) ймовірність, що спостережувана різниця сталась випадково.</p></div>
+          <div class="why"><span class="lbl">рішення</span><p>Затвердити зміни — впровадити знижку чи кампанію в постійному режимі, бо вона статистично доведено працює.</p></div>
+        </div></div>
+      </div>
+      <div>
+        <span class="branch-tag">p ≥ 0.05</span>
+        <div class="card action" data-detail="effectNotSig" style="--card-accent:var(--c-gray); --card-bg:var(--c-gray-bg); --card-accent-text:var(--c-gray)">
+          <p class="card-title">Зміни викликані випадковістю<span class="chevron">›</span></p>
+          <p class="card-sub">→ відхилити зміни</p>
+        </div>
+        <div class="detail" id="d-effectNotSig"><div class="detail-inner">
+          <div class="why"><span class="lbl">теза</span><p>p ≥ 0.05 — недостатньо доказів, що спостережувана різниця не є випадковим коливанням.</p></div>
+          <div class="why"><span class="lbl">рішення</span><p>Відхилити зміни — залишити поточну модель, бо очікуваного ефекту не підтверджено. Це не означає «ефекту немає», а означає «дані поки не довели його існування».</p></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="end-cap" style="margin-left:0;"></div>
+</div>
+
+<footer>складено на основі лекційного матеріалу з аналізу даних</footer>
+
+<script>
+document.querySelectorAll('.card[data-detail]').forEach(function(card){
+  card.addEventListener('click', function(){
+    var id = card.getAttribute('data-detail');
+    var detail = document.getElementById('d-' + id);
+    if(!detail) return;
+    var willOpen = !detail.classList.contains('open');
+    detail.classList.toggle('open');
+    card.classList.toggle('open', willOpen);
+  });
+});
+</script>
+
+</body>
+</html>
