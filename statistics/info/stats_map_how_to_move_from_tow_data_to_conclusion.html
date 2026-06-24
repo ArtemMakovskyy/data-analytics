@@ -27,6 +27,24 @@
     --accent-red-bg:#F8E5E2;
     --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
   }
+  /* Scheme 06 colour classes */
+  .c-gray rect{fill:var(--card);stroke:var(--line)}
+  .c-gray text{fill:var(--ink)}
+  .c-gray polygon{fill:var(--card);stroke:var(--line)}
+  .c-blue rect{fill:var(--accent-blue-bg);stroke:var(--accent-blue)}
+  .c-blue text{fill:var(--accent-blue)}
+  .c-purple rect{fill:var(--accent-purple-bg);stroke:var(--accent-purple)}
+  .c-purple text{fill:var(--accent-purple)}
+  .c-teal rect{fill:var(--accent-teal-bg);stroke:var(--accent-teal)}
+  .c-teal text{fill:var(--accent-teal)}
+  .c-green rect{fill:var(--accent-green-bg);stroke:var(--accent-green)}
+  .c-green text{fill:var(--accent-green)}
+  .c-amber rect{fill:var(--accent-amber-bg);stroke:var(--accent-amber)}
+  .c-amber text{fill:var(--accent-amber)}
+  .c-coral rect{fill:var(--accent-coral-bg);stroke:var(--accent-coral)}
+  .c-coral text{fill:var(--accent-coral)}
+  .th{font-weight:600;font-size:13px}
+  .ts{font-size:10px;opacity:0.85}
   @font-face{
     font-family:'Fraunces';
     src: local('Georgia');
@@ -148,6 +166,18 @@
     letter-spacing:0.02em;
   }
   .hint .ti{font-style:normal;}
+
+  /* Glossary term nodes (HTML blocks for section 6) */
+  .term-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:28px}
+  .term-node{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;transition:border-color .15s, background .15s;font-size:13px;font-weight:600;font-family:var(--mono);text-align:center;color:var(--ink)}
+  .term-node:hover{border-color:var(--ink);background:#fff}
+  .term-badge{font-size:10px;padding:1px 7px;border-radius:4px;font-weight:600}
+  .term-badge.alpha{background:var(--accent-blue-bg);color:var(--accent-blue)}
+  .term-badge.pvalue{background:var(--accent-purple-bg);color:var(--accent-purple)}
+  .term-badge.beta{background:var(--accent-coral-bg);color:var(--accent-coral)}
+  .term-badge.power{background:var(--accent-green-bg);color:var(--accent-green)}
+  .term-badge.n{background:var(--accent-teal-bg);color:var(--accent-teal)}
+  .term-badge.es{background:var(--accent-amber-bg);color:var(--accent-amber)}
 
   /* Expandable detail panel */
   .detail-panel{
@@ -830,10 +860,10 @@
       <span class="scheme-num">05</span>
       <h2>Вибір методу порівняння (A/B тестування)</h2>
     </div>
-    <p class="scheme-desc">Три питання визначають тест: <strong>тип даних</strong> (частки чи числа) → <strong>кількість груп</strong> (2 чи 3+) → <strong>розподіл</strong> (нормальний чи ні) + залежність вибірок.</p>
+    <p class="scheme-desc">Три питання визначають тест: <strong>тип даних</strong> (частки чи числа) → <strong>кількість груп</strong> (2 чи 3+) → <strong>розподіл</strong> (нормальний чи ні) + залежність вибірок. Коли розподіл ненормальний — на допомогу приходять непараметричні тести (Манна-Уїтні, Вілкоксона, Крускала-Уолліса).</p>
 
     <div class="diagram-card">
-      <svg viewBox="0 0 780 700">
+      <svg viewBox="0 0 780 790">
         <defs>
           <marker id="arrow5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M2 1L8 5L2 9" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -864,10 +894,12 @@
         <text x="165" y="160" text-anchor="middle" font-size="11" fill="var(--accent-green)">так</text>
 
         <g class="node" data-detail="ab-ztest" data-color="var(--accent-purple)">
-          <rect x="20" y="180" width="220" height="60" rx="8" fill="var(--accent-purple-bg)" stroke="var(--accent-purple)" stroke-width="0.75"/>
-          <text x="130" y="200" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-purple)">Z-тест пропорцій</text>
-          <text x="130" y="218" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-purple)">proportions_ztest()</text>
-          <text x="130" y="233" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--accent-purple)" opacity=".8">конверсія, CTR, частка покупців</text>
+          <rect x="20" y="180" width="220" height="85" rx="8" fill="var(--accent-purple-bg)" stroke="var(--accent-purple)" stroke-width="0.75"/>
+          <text x="130" y="200" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-purple)">Z-тест пропорцій</text>
+          <text x="130" y="217" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--accent-purple)">proportions_ztest()</text>
+          <text x="130" y="234" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-purple)" opacity=".8">частки</text>
+<!--          <text x="130" y="248" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(&#45;&#45;accent-purple)" opacity=".8">—</text>-->
+          <text x="130" y="248" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-purple)" opacity=".8">2 групи</text>
         </g>
 
         <!-- NO → кількість груп -->
@@ -886,6 +918,9 @@
         <!-- 3+ групи -->
         <line x1="660" y1="224" x2="690" y2="270" stroke="#999" stroke-width="1.5" marker-end="url(#arrow5)"/>
         <text x="710" y="252" text-anchor="middle" font-size="11" fill="#777">3+ групи</text>
+
+        <!-- z-test also merges (behind all blocks) -->
+        <line x1="130" y1="265" x2="280" y2="613" stroke="#999" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow5)"/>
 
         <!-- === БЛОК: 2 групи === -->
         <g class="node" data-detail="ab-q-norm2">
@@ -931,34 +966,42 @@
 
         <!-- Парний t-тест -->
         <g class="node" data-detail="ab-paired-t" data-color="var(--accent-blue)">
-          <rect x="25" y="456" width="115" height="62" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
-          <text x="82" y="477" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-blue)">Парний t-тест</text>
-          <text x="82" y="494" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--accent-blue)">ttest_rel()</text>
-          <text x="82" y="509" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)" opacity=".8">залежні, норм.</text>
+          <rect x="25" y="456" width="115" height="85" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="82" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-blue)">Парний t-тест</text>
+          <text x="82" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)">ttest_rel()</text>
+          <text x="82" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">кількісні</text>
+          <text x="82" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">нормальні</text>
+          <text x="82" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">та сама група</text>
         </g>
 
         <!-- t-тест Стьюдента -->
         <g class="node" data-detail="ab-ttest" data-color="var(--accent-blue)">
-          <rect x="150" y="456" width="115" height="62" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
-          <text x="207" y="477" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-blue)">t-тест</text>
-          <text x="207" y="494" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--accent-blue)">ttest_ind()</text>
-          <text x="207" y="509" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)" opacity=".8">незалежні, норм.</text>
+          <rect x="150" y="456" width="115" height="85" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="207" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-blue)">t-тест</text>
+          <text x="207" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)">ttest_ind()</text>
+          <text x="207" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">кількісні</text>
+          <text x="207" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">нормальні</text>
+          <text x="207" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">незалежні</text>
         </g>
 
         <!-- Wilcoxon -->
         <g class="node" data-detail="ab-wilcoxon" data-color="var(--accent-teal)">
-          <rect x="275" y="456" width="115" height="62" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
-          <text x="332" y="477" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-teal)">Вілкоксона</text>
-          <text x="332" y="494" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--accent-teal)">wilcoxon()</text>
-          <text x="332" y="509" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)" opacity=".8">залежні, ненорм.</text>
+          <rect x="275" y="456" width="115" height="85" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="332" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-teal)">Вілкоксона</text>
+          <text x="332" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)">wilcoxon()</text>
+          <text x="332" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">кількісні/порядкові</text>
+          <text x="332" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">ненормальні</text>
+          <text x="332" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">та сама група</text>
         </g>
 
         <!-- Mann-Whitney -->
         <g class="node" data-detail="ab-mannwhitney" data-color="var(--accent-teal)">
-          <rect x="400" y="456" width="115" height="62" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
-          <text x="457" y="477" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-teal)">Манна-Уїтні</text>
-          <text x="457" y="494" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--accent-teal)">mannwhitneyu()</text>
-          <text x="457" y="509" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)" opacity=".8">незалежні, ненорм.</text>
+          <rect x="400" y="456" width="115" height="85" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="457" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-teal)">Манна-Уїтні</text>
+          <text x="457" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)">mannwhitneyu()</text>
+          <text x="457" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">кількісні/порядкові</text>
+          <text x="457" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">ненормальні</text>
+          <text x="457" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">незалежні</text>
         </g>
 
         <!-- === БЛОК: 3+ групи === -->
@@ -975,52 +1018,59 @@
 
         <!-- ANOVA -->
         <g class="node" data-detail="ab-anova" data-color="var(--accent-blue)">
-          <rect x="525" y="456" width="115" height="62" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
-          <text x="582" y="477" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-blue)">ANOVA</text>
-          <text x="582" y="494" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--accent-blue)">f_oneway()</text>
-          <text x="582" y="509" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)" opacity=".8">3+ груп, норм.</text>
+          <rect x="525" y="456" width="115" height="85" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="582" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-blue)">ANOVA</text>
+          <text x="582" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)">f_oneway()</text>
+          <text x="582" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">кількісні</text>
+          <text x="582" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">нормальні</text>
+<!--          <text x="582" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(&#45;&#45;accent-blue)" opacity=".8">3+ групи</text>-->
         </g>
 
         <!-- Kruskal-Wallis -->
         <g class="node" data-detail="ab-kruskal" data-color="var(--accent-teal)">
-          <rect x="650" y="456" width="115" height="62" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
-          <text x="707" y="476" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-teal)">Kruskal-Wallis</text>
-          <text x="707" y="494" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--accent-teal)">kruskal()</text>
-          <text x="707" y="509" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)" opacity=".8">3+ груп, ненорм.</text>
+          <rect x="650" y="456" width="115" height="85" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="707" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-teal)">Kruskal-Wallis</text>
+          <text x="707" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)">kruskal()</text>
+          <text x="707" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">кількісні/порядкові</text>
+          <text x="707" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">ненормальні</text>
+<!--          <text x="707" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(&#45;&#45;accent-teal)" opacity=".8">3+ групи</text>-->
         </g>
 
-        <!-- z-test also merges -->
-        <line x1="130" y1="240" x2="130" y2="590" stroke="#999" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow5)"/>
-
         <!-- merge lines to p-value -->
-        <line x1="82" y1="518" x2="280" y2="590" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
-        <line x1="207" y1="518" x2="310" y2="590" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
-        <line x1="332" y1="518" x2="360" y2="590" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
-        <line x1="457" y1="518" x2="420" y2="590" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
-        <line x1="582" y1="518" x2="480" y2="590" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
-        <line x1="707" y1="518" x2="510" y2="590" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="82" y1="541" x2="280" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="207" y1="541" x2="310" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="332" y1="541" x2="360" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="457" y1="541" x2="420" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="582" y1="541" x2="480" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="707" y1="541" x2="510" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
 
-        <text x="390" y="576" text-anchor="middle" font-size="10" fill="#aaa" font-family="monospace">усі гілки зливаються</text>
+        <text x="390" y="599" text-anchor="middle" font-size="10" fill="#aaa" font-family="monospace">усі гілки зливаються</text>
 
         <!-- p-value -->
         <g class="node" data-detail="ab-pvalue">
-          <rect x="180" y="590" width="420" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
-          <text x="390" y="612" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">p-value → поріг 0.05</text>
+          <rect x="180" y="613" width="420" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="390" y="635" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">p-value → поріг 0.05</text>
         </g>
 
-        <line x1="280" y1="634" x2="160" y2="668" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow5c)"/>
-        <text x="190" y="655" text-anchor="middle" font-size="11" fill="var(--accent-coral)">p ≥ 0.05</text>
-        <line x1="500" y1="634" x2="580" y2="668" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
-        <text x="567" y="655" text-anchor="middle" font-size="11" fill="var(--accent-green)">p &lt; 0.05</text>
+        <line x1="280" y1="657" x2="160" y2="691" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow5c)"/>
+        <text x="190" y="678" text-anchor="middle" font-size="11" fill="var(--accent-coral)">p ≥ 0.05</text>
+        <line x1="500" y1="657" x2="580" y2="691" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
+        <text x="567" y="678" text-anchor="middle" font-size="11" fill="var(--accent-green)">p &lt; 0.05</text>
 
         <g class="node" data-detail="ab-notsig">
-          <rect x="50" y="668" width="210" height="18" rx="7" fill="#F1EFE8" stroke="#888" stroke-width="0.75"/>
-          <text x="155" y="677" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#555">Різниця не значуща → відхилити</text>
+          <rect x="50" y="691" width="210" height="18" rx="7" fill="#F1EFE8" stroke="#888" stroke-width="0.75"/>
+          <text x="155" y="700" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#555">Різниця не значуща → відхилити</text>
         </g>
 
         <g class="node" data-detail="ab-sig" data-color="var(--accent-green)">
-          <rect x="480" y="668" width="250" height="18" rx="7" fill="var(--accent-green-bg)" stroke="var(--accent-green)" stroke-width="0.75"/>
-          <text x="605" y="677" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-green)">Різниця значуща → затвердити зміни</text>
+          <rect x="480" y="691" width="250" height="18" rx="7" fill="var(--accent-green-bg)" stroke="var(--accent-green)" stroke-width="0.75"/>
+          <text x="605" y="700" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-green)">Різниця значуща → затвердити зміни</text>
+        </g>
+
+        <!-- non-parametric hint -->
+        <g class="node" data-detail="ab-nonparam" data-color="var(--accent-teal)">
+          <rect x="30" y="738" width="185" height="22" rx="6" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75" stroke-dasharray="4,3"/>
+          <text x="122" y="749" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="600" fill="var(--accent-teal)">Непараметричні тести</text>
         </g>
       </svg>
     </div>
@@ -1031,6 +1081,7 @@
       <p><strong>Теза:</strong> вибір тесту залежить від трьох питань: тип даних → кількість груп → розподіл + залежність.</p>
       <p><strong>Чому важливо:</strong> неправильний тест (наприклад, t-тест на ненормальних даних) дає ненадійне p-value і хибні висновки.</p>
       <p><strong>Що робити:</strong> пройди по гілках схеми зверху вниз — не пропускай перевірку нормальності, вона визначає весь подальший шлях.</p>
+      <p><strong>Непараметричні тести</strong> — це методи, які не вимагають нормального розподілу даних. Вони працюють із рангами або знаками замість сирих значень, що робить їх стійкими до викидів і скошених розподілів. Саме вони стають у пригоді, коли класичні параметричні тести (t-тест, ANOVA) застосувати не можна.</p>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-q-type"><div class="detail-inner">
@@ -1142,6 +1193,19 @@
       <p><strong>Що робити:</strong> впровадити нову версію (знижку, кампанію, редизайн). Зафіксуй дату і параметри тесту для подальшого аудиту.</p>
     </div></div>
 
+    <div class="detail-panel" id="panel-ab-nonparam"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Непараметричні тести — допомога у виборі методу порівняння</h3>
+      <p><strong>Теза:</strong> непараметричні тести — це статистичні методи, які не вимагають припущення про нормальний розподіл даних. Вони працюють із рангами або знаками замість сирих значень.</p>
+      <p><strong>Коли застосовувати:</strong></p>
+      <ul>
+        <li>Дані мають ненормальний розподіл, а вибірка замала, щоб спиратися на центральну граничну теорему.</li>
+        <li>Шкала вимірювання порядкова (ранги, категорії типу «погано / добре / відмінно»).</li>
+        <li>Розмір вибірки малий і перевірити нормальність надійно неможливо.</li>
+        <li>Дані містять викиди — непараметричні тести менш чутливі до них, але не усувають їхній вплив повністю.</li>
+      </ul>
+      <p><strong>Приклад:</strong> керуєш інтернет-магазином і хочеш порівняти час, який проводять користувачі на сайті після перегляду різних версій продуктової сторінки. Дані мають скошений розподіл, а вибірка невелика — тому t-тест ризикований. Тут підійде <strong>тест Манна-Уітні</strong> як непараметрична альтернатива.</p>
+    </div></div>
+
   </div>
 </section>
 <!-- ============ SECTION 6: SAMPLE SIZE ============ -->
@@ -1151,71 +1215,159 @@
       <span class="scheme-num">06</span>
       <h2>Розрахунок розміру вибірки</h2>
     </div>
-    <p class="scheme-desc">Який обсяг даних потрібен для надійного A/B тесту? Розмір вибірки залежить від бажаної точності, рівня значущості та потужності тесту.</p>
+    <p class="scheme-desc">Який обсяг даних потрібен для надійного A/B тесту? Розмір вибірки залежить від трьох параметрів, кожен зі своєю логікою впливу. Якщо n завелике — є три способи скоригувати параметри, кожен з компромісом.</p>
 
     <div class="diagram-card">
-      <svg viewBox="0 0 680 460">
-        <defs><marker id="arrow6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <svg viewBox="0 0 680 600">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
 
-        <g class="node" data-detail="ss-start">
-          <rect x="200" y="30" width="280" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
-          <text x="340" y="52" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">Планування A/B тесту</text>
+        <g class="node c-gray" data-detail="ss-start">
+          <rect x="190" y="20" width="300" height="44" rx="8" stroke-width="0.5"/>
+          <text x="340" y="42" text-anchor="middle" dominant-baseline="central" class="th">Планування A/B тесту</text>
         </g>
-        <line x1="340" y1="74" x2="340" y2="100" stroke="#999" stroke-width="1.5" marker-end="url(#arrow6)"/>
+        <line x1="340" y1="64" x2="340" y2="78" stroke="var(--line)" stroke-width="1.5" marker-end="url(#arrow)"/>
 
-        <g class="node" data-detail="ss-params">
-          <rect x="120" y="100" width="440" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
-          <text x="340" y="122" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Задай параметри: α (5%), потужність (80%), ефект, базова конверсія</text>
-        </g>
-        <line x1="340" y1="144" x2="340" y2="170" stroke="#999" stroke-width="1.5" marker-end="url(#arrow6)"/>
-
-        <g class="node" data-detail="ss-calc" data-color="var(--accent-purple)">
-          <rect x="140" y="170" width="400" height="44" rx="8" fill="var(--accent-purple-bg)" stroke="var(--accent-purple)" stroke-width="0.75"/>
-          <text x="340" y="192" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-purple)">solve_power(effect_size, power, alpha)</text>
-        </g>
-        <line x1="340" y1="214" x2="340" y2="240" stroke="#999" stroke-width="1.5" marker-end="url(#arrow6)"/>
-
-        <g class="node" data-detail="ss-result">
-          <rect x="120" y="240" width="440" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
-          <text x="340" y="262" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">Отримано мінімальний розмір на кожну групу</text>
-        </g>
-        <line x1="340" y1="284" x2="340" y2="310" stroke="#999" stroke-width="1.5" marker-end="url(#arrow6)"/>
-
-        <g class="node" data-detail="ss-check">
-          <rect x="180" y="310" width="320" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
-          <text x="340" y="332" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Чи задовольняє отриманий розмір бюджет / строки?</text>
+        <g class="node c-blue" data-detail="ss-alpha">
+          <rect x="10" y="82" width="210" height="50" rx="8" stroke-width="0.5"/>
+          <text x="115" y="100" text-anchor="middle" dominant-baseline="central" class="th">α = 0.05</text>
+          <text x="115" y="118" text-anchor="middle" dominant-baseline="central" class="ts">менше α → більше n</text>
         </g>
 
-        <line x1="240" y1="354" x2="120" y2="390" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow6)"/>
-        <text x="140" y="378" text-anchor="middle" font-size="11" fill="var(--accent-coral)">ні</text>
-        <line x1="440" y1="354" x2="540" y2="390" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow6)"/>
-        <text x="520" y="378" text-anchor="middle" font-size="11" fill="var(--accent-green)">так</text>
-
-        <g class="node" data-detail="ss-adjust" data-color="var(--accent-amber)">
-          <rect x="10" y="390" width="220" height="50" rx="8" fill="var(--accent-amber-bg)" stroke="var(--accent-amber)" stroke-width="0.75"/>
-          <text x="120" y="408" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-amber)">Скоригуй параметри</text>
-          <text x="120" y="426" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-amber)" opacity="0.85">зменш потужність / ефект</text>
+        <g class="node c-purple" data-detail="ss-power">
+          <rect x="235" y="82" width="210" height="50" rx="8" stroke-width="0.5"/>
+          <text x="340" y="100" text-anchor="middle" dominant-baseline="central" class="th">Потужність 1−β = 80%</text>
+          <text x="340" y="118" text-anchor="middle" dominant-baseline="central" class="ts">більше потужність → більше n</text>
         </g>
 
-        <g class="node" data-detail="ss-ready" data-color="var(--accent-green)">
-          <rect x="440" y="390" width="220" height="50" rx="8" fill="var(--accent-green-bg)" stroke="var(--accent-green)" stroke-width="0.75"/>
-          <text x="550" y="408" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-green)">Запускай тест</text>
-          <text x="550" y="426" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-green)" opacity="0.85">збирай дані до досягнення n</text>
+        <g class="node c-teal" data-detail="ss-effect">
+          <rect x="460" y="82" width="210" height="50" rx="8" stroke-width="0.5"/>
+          <text x="565" y="100" text-anchor="middle" dominant-baseline="central" class="th">Ефект = 5%</text>
+          <text x="565" y="118" text-anchor="middle" dominant-baseline="central" class="ts">менший ефект → більше n</text>
+        </g>
+
+        <line x1="115" y1="132" x2="115" y2="145" stroke="var(--line)" stroke-width="1"/>
+        <line x1="340" y1="132" x2="340" y2="145" stroke="var(--line)" stroke-width="1"/>
+        <line x1="565" y1="132" x2="565" y2="145" stroke="var(--line)" stroke-width="1"/>
+        <line x1="115" y1="145" x2="565" y2="145" stroke="var(--line)" stroke-width="1"/>
+        <line x1="340" y1="145" x2="340" y2="158" stroke="var(--line)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <g class="node c-gray" data-detail="ss-calc">
+          <rect x="140" y="162" width="400" height="44" rx="8" stroke-width="0.5"/>
+          <text x="340" y="184" text-anchor="middle" dominant-baseline="central" class="th">solve_power(effect_size, power, alpha)</text>
+        </g>
+        <line x1="340" y1="206" x2="340" y2="225" stroke="var(--line)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <g class="node c-green" data-detail="ss-result">
+          <rect x="120" y="232" width="440" height="50" rx="8" stroke-width="0.5"/>
+          <text x="340" y="250" text-anchor="middle" dominant-baseline="central" class="th">n на групу → загальний n = 2n</text>
+          <text x="340" y="268" text-anchor="middle" dominant-baseline="central" class="ts">приклад: 57 756 → 115 512</text>
+        </g>
+        <line x1="340" y1="282" x2="340" y2="305" stroke="var(--line)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <g class="node c-gray" data-detail="ss-check">
+          <polygon points="340,312 400,336 340,360 280,336"/>
+          <text x="340" y="332" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--ink)">n підходить за</text>
+          <text x="340" y="346" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--ink)">бюджетом / строками?</text>
+        </g>
+
+        <line x1="400" y1="336" x2="470" y2="336" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <text x="438" y="326" text-anchor="middle" font-size="11" font-weight="600" fill="var(--accent-green)">так</text>
+
+        <g class="node c-green" data-detail="ss-ready">
+          <rect x="475" y="318" width="195" height="36" rx="8" stroke-width="0.5"/>
+          <text x="572" y="336" text-anchor="middle" dominant-baseline="central" class="th">Запускай тест</text>
+        </g>
+
+        <line x1="280" y1="336" x2="115" y2="336" stroke="var(--accent-coral)" stroke-width="1.5"/>
+        <line x1="115" y1="336" x2="115" y2="393" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <text x="185" y="326" text-anchor="middle" font-size="11" font-weight="600" fill="var(--accent-coral)">ні</text>
+
+        <g class="node c-amber" data-detail="ss-adjust-power">
+          <rect x="10" y="400" width="210" height="50" rx="8" stroke-width="0.5"/>
+          <text x="115" y="418" text-anchor="middle" dominant-baseline="central" class="th">↓ Потужність до 70%</text>
+          <text x="115" y="436" text-anchor="middle" dominant-baseline="central" class="ts">ризик: пропустити ефект</text>
+        </g>
+
+        <g class="node c-amber" data-detail="ss-adjust-effect">
+          <rect x="10" y="465" width="210" height="50" rx="8" stroke-width="0.5"/>
+          <text x="115" y="483" text-anchor="middle" dominant-baseline="central" class="th">↑ Ефект до 10%</text>
+          <text x="115" y="501" text-anchor="middle" dominant-baseline="central" class="ts">ризик: менша чутливість</text>
+        </g>
+
+        <g class="node c-amber" data-detail="ss-adjust-alpha">
+          <rect x="10" y="530" width="210" height="50" rx="8" stroke-width="0.5"/>
+          <text x="115" y="548" text-anchor="middle" dominant-baseline="central" class="th">↑ α до 0.10</text>
+          <text x="115" y="566" text-anchor="middle" dominant-baseline="central" class="ts">ризик: хибно-позитивний</text>
+        </g>
+
+        <polyline points="115,450 70,450 70,184 140,184" fill="none" stroke="var(--accent-amber)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+        <polyline points="115,515 70,515 70,184 140,184" fill="none" stroke="var(--accent-amber)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+        <polyline points="115,580 70,580 70,184 140,184" fill="none" stroke="var(--accent-amber)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+
+        <g class="node c-gray" data-detail="ss-risks">
+          <rect x="460" y="400" width="210" height="44" rx="8" stroke-width="0.5"/>
+          <text x="565" y="416" text-anchor="middle" dominant-baseline="central" class="th">Сезонні коливання</text>
+          <text x="565" y="432" text-anchor="middle" dominant-baseline="central" class="ts">пікові періоди спотворюють</text>
+        </g>
+
+        <g class="node c-gray" data-detail="ss-risks">
+          <rect x="460" y="465" width="210" height="44" rx="8" stroke-width="0.5"/>
+          <text x="565" y="481" text-anchor="middle" dominant-baseline="central" class="th">Нестабільна конверсія</text>
+          <text x="565" y="497" text-anchor="middle" dominant-baseline="central" class="ts">мінлива метрика → більше n</text>
+        </g>
+
+        <g class="node c-gray" data-detail="ss-risks">
+          <rect x="460" y="530" width="210" height="44" rx="8" stroke-width="0.5"/>
+          <text x="565" y="546" text-anchor="middle" dominant-baseline="central" class="th">Вартість залучення</text>
+          <text x="565" y="562" text-anchor="middle" dominant-baseline="central" class="ts">баланс точності і бюджету</text>
         </g>
       </svg>
+
+      <h3 style="font-family:Georgia,serif;font-weight:400;font-size:16px;margin:16px 12px 10px;padding-top:14px;border-top:1px solid var(--line)">Основні параметри статистичного тесту</h3>
+      <p style="font-size:12px;color:var(--ink-soft);margin:0 12px 14px;font-family:var(--mono)">клікни на термін, щоб розкрити пояснення</p>
+
+      <div class="term-grid" style="padding:0 4px 8px">
+        <div class="term-node" data-detail="t-alpha" data-color="var(--accent-blue)">Рівень значущості <span class="term-badge alpha">α</span></div>
+        <div class="term-node" data-detail="t-pvalue" data-color="var(--accent-purple)">p-value</div>
+        <div class="term-node" data-detail="t-beta" data-color="var(--accent-coral)">Помилка II роду <span class="term-badge beta">β</span></div>
+        <div class="term-node" data-detail="t-power" data-color="var(--accent-green)">Потужність <span class="term-badge power">1−β</span></div>
+        <div class="term-node" data-detail="t-n" data-color="var(--accent-teal)">Розмір вибірки <span class="term-badge n">n</span></div>
+        <div class="term-node" data-detail="t-es" data-color="var(--accent-amber)">Розмір ефекту <span class="term-badge es">ES</span></div>
+      </div>
+
+      <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'" style="margin:0 12px 10px;padding:8px 16px;background:var(--accent-teal);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">Test Calculator</button>
+      <div style="display:none;margin:0 12px 14px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--line);border-radius:8px">
+        <a href="https://cxl.com/ab-test-calculator/" target="_blank" rel="noopener noreferrer" style="display:block;padding:6px 0;color:var(--accent-teal);text-decoration:none;font-weight:500">CXL AB Test Calculator →</a>
+        <a href="https://rpsychologist.com/d3/nhst/" target="_blank" rel="noopener noreferrer" style="display:block;padding:6px 0;color:var(--accent-teal);text-decoration:none;font-weight:500">rpsychologist NHST Visualization →</a>
+      </div>
     </div>
-    <p class="hint">клікни на блок схеми — розрахунок на основі статистичної потужності тесту</p>
+    <p class="hint">клікни на блок схеми — три параметри, три способи коригування, фактори ризику. <strong>Внизу — основні терміни.</strong></p>
 
     <div class="detail-panel" id="panel-ss-start"><div class="detail-inner">
       <h3>Навіщо рахувати розмір вибірки заздалегідь?</h3>
       <p>Без попереднього розрахунку є ризик: (1) не виявити реальний ефект через малу вибірку, (2) витратити зайві ресурси на надто велику вибірку.</p>
     </div></div>
-    <div class="detail-panel" id="panel-ss-params"><div class="detail-inner">
-      <h3>Ключові параметри</h3>
-      <p><strong>α (рівень значущості)</strong> — ризик хибно позитивного результату. Зазвичай 0.05 (5%).</p>
-      <p><strong>Потужність (1 − β)</strong> — імовірність виявити реальний ефект. Зазвичай 0.80 (80%).</p>
-      <p><strong>Ефект розміру (effect size)</strong> — мінімальна різниця між групами, яку хочеш виявити. Наприклад, 5% відносного підвищення конверсії.</p>
-      <p><strong>Базова конверсія (baseline)</strong> — поточне значення метрики, яку покращуєш (наприклад, 10%).</p>
+    <div class="detail-panel" id="panel-ss-alpha"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>α — рівень значущості</h3>
+      <p>Ймовірність хибно-позитивного результату (відхилити H₀, коли вона правдива). Стандарт: 0.05 (5%).</p>
+      <p><strong>Вплив на n:</strong> що менший α, то більша вибірка потрібна. α = 0.01 потребує більше n, ніж α = 0.05, бо ми вимагаємо вищої впевненості.</p>
+      <p><strong>Компроміс:</strong> збільшення α (до 0.10) зменшує n, але підвищує ризик помилкового відкриття ефекту, якого немає.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-ss-power"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Потужність тесту (1 − β)</h3>
+      <p>Ймовірність виявити реальний ефект, якщо він існує. Стандарт: 0.80 (80%). β = 0.20 — ризик пропустити ефект.</p>
+      <p><strong>Вплив на n:</strong> що вища потужність, то більша вибірка потрібна. 90% потребує більше n, ніж 80%.</p>
+      <p><strong>Компроміс:</strong> зниження потужності (до 70%) зменшує n, але підвищує ризик не помітити реальну різницю між групами.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-ss-effect"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Ефект розміру (effect size)</h3>
+      <p>Мінімальна різниця між групами, яку хочеш виявити. Розраховується через Cohen's h: <code>proportion_effectsize(baseline, variant)</code>.</p>
+      <p><strong>Вплив на n:</strong> що менший ефект, то більша вибірка потрібна. Виявити +1% конверсії важче, ніж +10%.</p>
+      <p><strong>Приклад:</strong> базова конверсія 10%, відносний ефект 5% → variant = 10.5%. Це малий ефект → потрібно ~57 756 користувачів на групу.</p>
     </div></div>
     <div class="detail-panel" id="panel-ss-calc"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
       <h3>Розрахунок через statsmodels</h3>
@@ -1230,15 +1382,72 @@
     </div></div>
     <div class="detail-panel" id="panel-ss-check"><div class="detail-inner">
       <h3>Перевір реалістичність</h3>
-      <p>Чи можна зібрати стільки даних наявними ресурсами? Якщо ні — доведеться скоригувати параметри тесту (зменшити потужність, збільшити мінімальний ефект, або погодитися на більш м'який рівень значущості).</p>
+      <p>Чи можна зібрати стільки даних наявними ресурсами? Якщо ні — доведеться скоригувати параметри тесту. Три способи зменшити n — кожен зі своїм компромісом.</p>
     </div></div>
-    <div class="detail-panel" id="panel-ss-adjust"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
-      <h3>Коригування параметрів</h3>
-      <p>Якщо потрібна менша вибірка, можна: зменшити потужність (наприклад, 70% замість 80%), збільшити мінімальний ефект (наприклад, 10% замість 5%), або обрати вищий рівень значущості. Кожне коригування — компроміс.</p>
+    <div class="detail-panel" id="panel-ss-adjust-power"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
+      <h3>Зменшити потужність — ризик пропустити ефект</h3>
+      <p>Зниження потужності з 80% до 70% зменшує необхідний n, але підвищує ймовірність помилки II роду — не помітити реальне покращення.</p>
+      <p><strong>Коли варто:</strong> якщо тест пілотний / розвідувальний, а не фінальний.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-ss-adjust-effect"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
+      <h3>Збільшити мінімальний ефект — грубіший тест</h3>
+      <p>Замість 5% відносної різниці взяти 10% — це різко зменшує n, але тест зможе виявити лише великі зміни.</p>
+      <p><strong>Коли варто:</strong> якщо для бізнесу мають значення лише суттєві покращення (наприклад, +10% конверсії).</p>
+    </div></div>
+    <div class="detail-panel" id="panel-ss-adjust-alpha"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
+      <h3>Збільшити α — ризик false positive</h3>
+      <p>Підвищення α з 0.05 до 0.10 зменшує n, але в 10% випадків тест покаже ефект там, де його немає.</p>
+      <p><strong>Коли варто:</strong> якщо помилкове впровадження зміни некоштовне, а пропустити реальний ефект — дорого.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-ss-risks"><div class="detail-inner" style="--detail-color:var(--accent-coral)">
+      <h3>Фактори ризику, що впливають на розмір вибірки</h3>
+      <p><strong>Сезонні коливання:</strong> тест під час розпродажів або пікових періодів може дати нестабільні результати — варто збільшити n або провести тест у звичайний період.</p>
+      <p><strong>Нестабільна конверсія:</strong> якщо метрика сильно змінюється день-від-дня, потрібна більша вибірка для точної оцінки.</p>
+      <p><strong>Вартість залучення:</strong> великий n вимагає більше трафіку / бюджету. Знайди баланс між статистичною точністю і вартістю експерименту.</p>
     </div></div>
     <div class="detail-panel" id="panel-ss-ready"><div class="detail-inner" style="--detail-color:var(--accent-green)">
       <h3>Готово до запуску</h3>
       <p>З розрахованим розміром вибірки можна починати A/B тест. Збирай дані, поки кожна група не досягне цільового n, після чого застосовуй обраний тест (Секція 05).</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-t-alpha"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Рівень значущості (α)</h3>
+      <p>Максимально допустима ймовірність <strong>помилки першого роду</strong> — зробити висновок про наявність ефекту, коли його насправді немає. Значення α задається до початку аналізу, найчастіше 0.05.</p>
+      <p><strong>Використання:</strong> порівнюється з p-value для прийняття статистичного рішення.</p>
+      <p>α = 0.05 при n = 1000 (наприклад) означає: якщо насправді між групами немає різниці, то в 5% випадків тест все одно покаже "є різниця". Тобто при 1000 експериментах із нульовим ефектом приблизно 50 разів буде хибне "значуще".</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-t-pvalue"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>p-value</h3>
+      <p>Ймовірність отримати такі самі або більш екстремальні результати за умови, що нульова гіпотеза є правильною. Обчислюється за вибіркою після проведення тесту.</p>
+      <p><strong>Використання:</strong> якщо p-value ≤ α, нульову гіпотезу відхиляють; якщо p-value &gt; α — підстав для її відхилення недостатньо.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-t-beta"><div class="detail-inner" style="--detail-color:var(--accent-coral)">
+      <h3>Помилка другого роду (β)</h3>
+      <p>Ймовірність <strong>не виявити</strong> реальний ефект, коли він існує.</p>
+      <p><strong>Використання:</strong> застосовується під час планування дослідження та розрахунку необхідного розміру вибірки.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-t-power"><div class="detail-inner" style="--detail-color:var(--accent-green)">
+      <h3>Потужність тесту (1 − β)</h3>
+      <p>Ймовірність <strong>виявити</strong> реальний ефект, якщо він існує. Зазвичай використовують потужність 80% або 90%.</p>
+      <p><strong>Використання:</strong> визначає, наскільки тест здатний знаходити реальні відмінності.</p>
+      <p>1 − β = 0.80 при n = 1000 означає: якщо реальна різниця існує (наприклад 10% → 10.5%), то в 80% випадків тест її виявить. β = 0.20 означає: у 20% випадків навіть при 1000 спостереженнях тест не побачить реальну різницю.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-t-n"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Розмір вибірки (n)</h3>
+      <p>Кількість спостережень, що використовуються для аналізу. Впливає на точність статистичних оцінок, рівень випадкового шуму та потужність тесту.</p>
+      <p><strong>Використання:</strong> розраховується до початку дослідження на основі α, β та очікуваного ефекту.</p>
+      <p>Це кількість спостережень, яка задає рівень шуму даних. При n = 1000 статистичні оцінки стабільніші: p-value менше коливається, а шанс виявити ефект (power) зростає.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-t-es"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
+      <h3>Розмір ефекту (Effect Size)</h3>
+      <p>Величина різниці між групами або сила зв'язку, яку потрібно виявити. Чим менший очікуваний ефект, тим більша вибірка потрібна для його виявлення.</p>
+      <p><strong>Використання:</strong> задається під час планування дослідження та використовується для розрахунку необхідного розміру вибірки.</p>
+      <p>При n = 1000 це мінімальна різниця між групами, яку ти закладаєш у план тесту як ціль виявлення. Наприклад: 10% конверсія (контроль) і 10.5% (тест). Саме цю різницю система вважає "сигналом", який потрібно відрізнити від шуму при вибірці 1000 користувачів.</p>
     </div></div>
   </div>
 </section>
@@ -1248,7 +1457,7 @@
 </footer>
 
 <script>
-document.querySelectorAll('.node').forEach(function(node){
+document.querySelectorAll('.node, .term-node').forEach(function(node){
   node.addEventListener('click', function(){
     var id = node.getAttribute('data-detail');
     var color = node.getAttribute('data-color');
@@ -1272,6 +1481,7 @@ document.querySelectorAll('.node').forEach(function(node){
     }
   });
 });
+
 </script>
 
 </body>
