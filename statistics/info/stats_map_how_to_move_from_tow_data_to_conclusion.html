@@ -156,6 +156,8 @@
   .node:hover rect{filter:brightness(0.96);}
   .node:active rect{transform:scale(0.99);}
   .node text{pointer-events:none;}
+  .clickable-heading{cursor:pointer;transition:opacity .15s;}
+  .clickable-heading:hover{opacity:0.7;}
 
   .hint{
     font-family: var(--mono);
@@ -715,6 +717,8 @@
       <span class="scheme-num">04</span>
       <h2>Вибір методу кореляції</h2>
     </div>
+    <h4>Ступінь тісноти = «наскільки сильно пов’язані змінні» (загальне поняття).</h4>
+    <h4>Кореляція = «один із способів виміряти цей ступінь» (конкретний показник)</h4>
     <p class="scheme-desc">Тип даних і наявність аномалій визначають коефіцієнт; p-value визначає, чи довіряти результату.</p>
     <p class="scheme-desc" style="margin-bottom:12px">Як обрати правильний метод для визначення кореляції?</p>
     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:20px">
@@ -863,7 +867,7 @@
     <p class="scheme-desc">Три питання визначають тест: <strong>тип даних</strong> (частки чи числа) → <strong>кількість груп</strong> (2 чи 3+) → <strong>розподіл</strong> (нормальний чи ні) + залежність вибірок. Коли розподіл ненормальний — на допомогу приходять непараметричні тести (Манна-Уїтні, Вілкоксона, Крускала-Уолліса).</p>
 
     <div class="diagram-card">
-      <svg viewBox="0 0 780 790">
+      <svg viewBox="0 0 780 860">
         <defs>
           <marker id="arrow5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M2 1L8 5L2 9" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -920,7 +924,7 @@
         <text x="710" y="252" text-anchor="middle" font-size="11" fill="#777">3+ групи</text>
 
         <!-- z-test also merges (behind all blocks) -->
-        <line x1="130" y1="265" x2="280" y2="613" stroke="#999" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow5)"/>
+        <line x1="130" y1="265" x2="200" y2="658" stroke="#999" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow5)"/>
 
         <!-- === БЛОК: 2 групи === -->
         <g class="node" data-detail="ab-q-norm2">
@@ -952,56 +956,78 @@
         </g>
 
         <!-- → парний t-тест -->
-        <line x1="140" y1="410" x2="82" y2="456" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
-        <text x="90" y="440" text-anchor="middle" font-size="10" fill="var(--accent-green)">так</text>
-        <!-- → незалежний t-тест -->
-        <line x1="260" y1="410" x2="207" y2="456" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow5c)"/>
-        <text x="248" y="440" text-anchor="middle" font-size="10" fill="var(--accent-coral)">ні</text>
+        <line x1="140" y1="410" x2="65" y2="515" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
+        <text x="88" y="462" text-anchor="middle" font-size="10" fill="var(--accent-green)">так</text>
+        <!-- → рівність дисперсій -->
+        <line x1="260" y1="410" x2="210" y2="445" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow5c)"/>
+        <text x="248" y="432" text-anchor="middle" font-size="10" fill="var(--accent-coral)">ні</text>
+
+        <!-- чи рівні дисперсії -->
+        <g class="node" data-detail="ab-var">
+          <rect x="100" y="445" width="220" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="210" y="463" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Дисперсії рівні?</text>
+          <text x="210" y="479" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#999">(Levene / Bartlett)</text>
+        </g>
+
+        <line x1="165" y1="489" x2="163" y2="515" stroke="var(--accent-green)" stroke-width="2" marker-end="url(#arrow5g)"/>
+        <text x="146" y="505" text-anchor="middle" font-size="9" fill="var(--accent-green)">так</text>
+        <line x1="255" y1="489" x2="257" y2="515" stroke="var(--accent-coral)" stroke-width="2" marker-end="url(#arrow5c)"/>
+        <text x="278" y="505" text-anchor="middle" font-size="9" fill="var(--accent-coral)">ні</text>
         <!-- → Wilcoxon -->
-        <line x1="440" y1="410" x2="332" y2="456" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
-        <text x="375" y="440" text-anchor="middle" font-size="10" fill="var(--accent-green)">так</text>
+        <line x1="440" y1="410" x2="356" y2="515" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
+        <text x="388" y="462" text-anchor="middle" font-size="10" fill="var(--accent-green)">так</text>
         <!-- → Mann-Whitney -->
-        <line x1="560" y1="410" x2="457" y2="456" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow5c)"/>
-        <text x="520" y="440" text-anchor="middle" font-size="10" fill="var(--accent-coral)">ні</text>
+        <line x1="560" y1="410" x2="460" y2="515" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow5c)"/>
+        <text x="523" y="462" text-anchor="middle" font-size="10" fill="var(--accent-coral)">ні</text>
 
         <!-- Парний t-тест -->
         <g class="node" data-detail="ab-paired-t" data-color="var(--accent-blue)">
-          <rect x="25" y="456" width="115" height="85" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
-          <text x="82" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-blue)">Парний t-тест</text>
-          <text x="82" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)">ttest_rel()</text>
-          <text x="82" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">кількісні</text>
-          <text x="82" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">нормальні</text>
-          <text x="82" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">та сама група</text>
+          <rect x="18" y="515" width="95" height="85" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="65" y="531" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-blue)">Парний t-тест</text>
+          <text x="65" y="547" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)">ttest_rel()</text>
+          <text x="65" y="563" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">кількісні</text>
+          <text x="65" y="577" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">нормальні</text>
+          <text x="65" y="591" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">та сама група</text>
         </g>
 
-        <!-- t-тест Стьюдента -->
+        <!-- t-тест Стьюдента (equal_var=True) -->
         <g class="node" data-detail="ab-ttest" data-color="var(--accent-blue)">
-          <rect x="150" y="456" width="115" height="85" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
-          <text x="207" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-blue)">t-тест</text>
-          <text x="207" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)">ttest_ind()</text>
-          <text x="207" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">кількісні</text>
-          <text x="207" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">нормальні</text>
-          <text x="207" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">незалежні</text>
+          <rect x="120" y="515" width="86" height="85" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="163" y="531" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="600" fill="var(--accent-blue)">t-тест</text>
+          <text x="163" y="547" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)">Стьюдента</text>
+          <text x="163" y="563" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">ttest_ind()</text>
+          <text x="163" y="577" text-anchor="middle" dominant-baseline="central" font-size="7" fill="var(--accent-blue)" opacity=".8">рівні дисперсії</text>
+          <text x="163" y="591" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">незалежні</text>
+        </g>
+
+        <!-- t-тест Велча (equal_var=False) -->
+        <g class="node" data-detail="ab-welch" data-color="var(--accent-blue)">
+          <rect x="214" y="515" width="86" height="85" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="257" y="531" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="600" fill="var(--accent-blue)">t-тест</text>
+          <text x="257" y="547" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)">Велча</text>
+          <text x="257" y="563" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">ttest_ind()</text>
+          <text x="257" y="577" text-anchor="middle" dominant-baseline="central" font-size="7" fill="var(--accent-blue)" opacity=".8">нерівні дисперсії</text>
+          <text x="257" y="591" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">незалежні</text>
         </g>
 
         <!-- Wilcoxon -->
         <g class="node" data-detail="ab-wilcoxon" data-color="var(--accent-teal)">
-          <rect x="275" y="456" width="115" height="85" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
-          <text x="332" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-teal)">Вілкоксона</text>
-          <text x="332" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)">wilcoxon()</text>
-          <text x="332" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">кількісні/порядкові</text>
-          <text x="332" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">ненормальні</text>
-          <text x="332" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">та сама група</text>
+          <rect x="309" y="515" width="95" height="85" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="356" y="531" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-teal)">Вілкоксона</text>
+          <text x="356" y="547" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)">wilcoxon()</text>
+          <text x="356" y="563" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">кількісні/порядкові</text>
+          <text x="356" y="577" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">ненормальні</text>
+          <text x="356" y="591" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">та сама група</text>
         </g>
 
         <!-- Mann-Whitney -->
         <g class="node" data-detail="ab-mannwhitney" data-color="var(--accent-teal)">
-          <rect x="400" y="456" width="115" height="85" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
-          <text x="457" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-teal)">Манна-Уїтні</text>
-          <text x="457" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)">mannwhitneyu()</text>
-          <text x="457" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">кількісні/порядкові</text>
-          <text x="457" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">ненормальні</text>
-          <text x="457" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">незалежні</text>
+          <rect x="413" y="515" width="95" height="85" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="460" y="531" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-teal)">Манна-Уїтні</text>
+          <text x="460" y="547" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)">mannwhitneyu()</text>
+          <text x="460" y="563" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">кількісні/порядкові</text>
+          <text x="460" y="577" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">ненормальні</text>
+          <text x="460" y="591" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">незалежні</text>
         </g>
 
         <!-- === БЛОК: 3+ групи === -->
@@ -1011,66 +1037,75 @@
           <text x="680" y="302" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">розподіл?</text>
         </g>
 
-        <line x1="640" y1="314" x2="582" y2="456" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
-        <text x="590" y="390" text-anchor="middle" font-size="11" fill="var(--accent-green)">так</text>
-        <line x1="720" y1="314" x2="707" y2="456" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow5c)"/>
-        <text x="730" y="390" text-anchor="middle" font-size="11" fill="var(--accent-coral)">ні</text>
+        <line x1="640" y1="314" x2="564" y2="515" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
+        <text x="585" y="420" text-anchor="middle" font-size="11" fill="var(--accent-green)">так</text>
+        <line x1="720" y1="314" x2="672" y2="515" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow5c)"/>
+        <text x="730" y="420" text-anchor="middle" font-size="11" fill="var(--accent-coral)">ні</text>
 
         <!-- ANOVA -->
         <g class="node" data-detail="ab-anova" data-color="var(--accent-blue)">
-          <rect x="525" y="456" width="115" height="85" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
-          <text x="582" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-blue)">ANOVA</text>
-          <text x="582" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)">f_oneway()</text>
-          <text x="582" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">кількісні</text>
-          <text x="582" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">нормальні</text>
-<!--          <text x="582" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(&#45;&#45;accent-blue)" opacity=".8">3+ групи</text>-->
+          <rect x="517" y="515" width="95" height="85" rx="7" fill="var(--accent-blue-bg)" stroke="var(--accent-blue)" stroke-width="0.75"/>
+          <text x="564" y="529" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-blue)">ANOVA</text>
+          <text x="564" y="545" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-blue)">f_oneway()</text>
+          <text x="564" y="561" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-blue)" opacity=".8">кількісні</text>
+          <text x="564" y="575" text-anchor="middle" dominant-baseline="central" font-size="7" fill="var(--accent-blue)" opacity=".8">нормальні</text>
+          <text x="564" y="589" text-anchor="middle" dominant-baseline="central" font-size="7" fill="var(--accent-blue)" opacity=".8">рівні дисперсії</text>
         </g>
 
         <!-- Kruskal-Wallis -->
         <g class="node" data-detail="ab-kruskal" data-color="var(--accent-teal)">
-          <rect x="650" y="456" width="115" height="85" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
-          <text x="707" y="472" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-teal)">Kruskal-Wallis</text>
-          <text x="707" y="488" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)">kruskal()</text>
-          <text x="707" y="504" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">кількісні/порядкові</text>
-          <text x="707" y="518" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">ненормальні</text>
-<!--          <text x="707" y="532" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(&#45;&#45;accent-teal)" opacity=".8">3+ групи</text>-->
+          <rect x="620" y="515" width="105" height="85" rx="7" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="672" y="531" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="var(--accent-teal)">Kruskal-Wallis</text>
+          <text x="672" y="547" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--accent-teal)">kruskal()</text>
+          <text x="672" y="563" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">кількісні/порядкові</text>
+          <text x="672" y="577" text-anchor="middle" dominant-baseline="central" font-size="8" fill="var(--accent-teal)" opacity=".8">ненормальні</text>
         </g>
 
         <!-- merge lines to p-value -->
-        <line x1="82" y1="541" x2="280" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
-        <line x1="207" y1="541" x2="310" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
-        <line x1="332" y1="541" x2="360" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
-        <line x1="457" y1="541" x2="420" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
-        <line x1="582" y1="541" x2="480" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
-        <line x1="707" y1="541" x2="510" y2="613" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="65" y1="600" x2="200" y2="658" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="163" y1="600" x2="250" y2="658" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="257" y1="600" x2="300" y2="658" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="356" y1="600" x2="350" y2="658" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="460" y1="600" x2="420" y2="658" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="564" y1="600" x2="480" y2="658" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
+        <line x1="672" y1="600" x2="530" y2="658" stroke="#999" stroke-width="1" marker-end="url(#arrow5)"/>
 
-        <text x="390" y="599" text-anchor="middle" font-size="10" fill="#aaa" font-family="monospace">усі гілки зливаються</text>
+        <text x="390" y="644" text-anchor="middle" font-size="10" fill="#aaa" font-family="monospace">усі гілки зливаються</text>
 
         <!-- p-value -->
         <g class="node" data-detail="ab-pvalue">
-          <rect x="180" y="613" width="420" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
-          <text x="390" y="635" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">p-value → поріг 0.05</text>
+          <rect x="180" y="658" width="420" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="390" y="680" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">p-value → поріг 0.05</text>
         </g>
 
-        <line x1="280" y1="657" x2="160" y2="691" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow5c)"/>
-        <text x="190" y="678" text-anchor="middle" font-size="11" fill="var(--accent-coral)">p ≥ 0.05</text>
-        <line x1="500" y1="657" x2="580" y2="691" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
-        <text x="567" y="678" text-anchor="middle" font-size="11" fill="var(--accent-green)">p &lt; 0.05</text>
+        <line x1="280" y1="702" x2="160" y2="736" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow5c)"/>
+        <text x="190" y="723" text-anchor="middle" font-size="11" fill="var(--accent-coral)">p ≥ 0.05</text>
+        <line x1="500" y1="702" x2="580" y2="736" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
+        <text x="567" y="723" text-anchor="middle" font-size="11" fill="var(--accent-green)">p &lt; 0.05</text>
 
         <g class="node" data-detail="ab-notsig">
-          <rect x="50" y="691" width="210" height="18" rx="7" fill="#F1EFE8" stroke="#888" stroke-width="0.75"/>
-          <text x="155" y="700" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#555">Різниця не значуща → відхилити</text>
+          <rect x="50" y="736" width="210" height="18" rx="7" fill="#F1EFE8" stroke="#888" stroke-width="0.75"/>
+          <text x="155" y="745" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#555">Різниця не значуща → відхилити</text>
         </g>
 
         <g class="node" data-detail="ab-sig" data-color="var(--accent-green)">
-          <rect x="480" y="691" width="250" height="18" rx="7" fill="var(--accent-green-bg)" stroke="var(--accent-green)" stroke-width="0.75"/>
-          <text x="605" y="700" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-green)">Різниця значуща → затвердити зміни</text>
+          <rect x="480" y="736" width="250" height="18" rx="7" fill="var(--accent-green-bg)" stroke="var(--accent-green)" stroke-width="0.75"/>
+          <text x="605" y="745" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="var(--accent-green)">Різниця значуща → затвердити зміни</text>
         </g>
 
         <!-- non-parametric hint -->
         <g class="node" data-detail="ab-nonparam" data-color="var(--accent-teal)">
-          <rect x="30" y="738" width="185" height="22" rx="6" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75" stroke-dasharray="4,3"/>
-          <text x="122" y="749" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="600" fill="var(--accent-teal)">Непараметричні тести</text>
+          <rect x="30" y="783" width="185" height="22" rx="6" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75" stroke-dasharray="4,3"/>
+          <text x="122" y="794" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="600" fill="var(--accent-teal)">Непараметричні тести</text>
+        </g>
+
+        <!-- separator line -->
+        <line x1="30" y1="810" x2="600" y2="810" stroke="var(--line)" stroke-width="0.5"/>
+
+        <!-- general rule about variance checks -->
+        <g>
+          <rect x="30" y="816" width="570" height="26" rx="8" fill="#F1EFE8" stroke="var(--line)" stroke-width="0.75"/>
+          <text x="315" y="829" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--ink-soft)"><tspan font-weight="600" fill="var(--ink)">Правило: </tspan>перевірка рівності дисперсій потрібна лише для параметричних тестів (t-тест, ANOVA)</text>
         </g>
       </svg>
     </div>
@@ -1123,6 +1158,15 @@
       <p><strong>Незалежні:</strong> різні сегменти → Mann-Whitney U (непараметричний аналог незалежного t-тесту).</p>
     </div></div>
 
+    <div class="detail-panel" id="panel-ab-var"><div class="detail-inner">
+      <h3>Перевірка рівності дисперсій (Levene test)</h3>
+      <p><strong>Дисперсія</strong> — це міра розкиду даних навколо середнього значення. Чим більша дисперсія, тим сильніше значення відхиляються від середнього.</p>
+      <p><strong>Теза:</strong> перед вибором між t-тестом Стьюдента та Велча перевір, чи дисперсії груп однакові.</p>
+      <p><strong>Як перевірити:</strong> тест Левена (<code>scipy.stats.levene(group_a, group_b)</code>) або тест Бартлетта (<code>scipy.stats.bartlett(group_a, group_b)</code>).</p>
+      <p><strong>Інтерпретація:</strong> p ≥ 0.05 → дисперсії рівні → t-тест Стьюдента; p &lt; 0.05 → дисперсії нерівні → t-тест Велча.</p>
+      <p><strong>Важливо:</strong> якщо розміри груп сильно відрізняються — завжди використовуй Велча, він надійніший.</p>
+    </div></div>
+
     <div class="detail-panel" id="panel-ab-paired-t"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
       <h3>Парний t-тест — залежні вибірки, нормальний розподіл</h3>
       <p><strong>Теза:</strong> порівнює середнє значення різниць між парами, а не самі групи — тому потужніший за незалежний t-тест при однаковому n.</p>
@@ -1132,11 +1176,21 @@
     </div></div>
 
     <div class="detail-panel" id="panel-ab-ttest"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
-      <h3>t-тест Стьюдента — незалежні вибірки, нормальний розподіл</h3>
-      <p><strong>Теза:</strong> перевіряє, чи різниця між середніми двох груп більша, ніж можна очікувати від випадкового шуму.</p>
-      <p><strong>Умова:</strong> обидві групи мають нормальний розподіл (перевір перед застосуванням!).</p>
-      <p><strong>Як:</strong> <code>scipy.stats.ttest_ind(group_a, group_b)</code></p>
+      <h3>t-тест Стьюдента — незалежні вибірки, нормальний розподіл, рівні дисперсії</h3>
+      <p><strong>Теза:</strong> класичний t-тест для незалежних вибірок. Перевіряє, чи різниця між середніми двох груп більша, ніж можна очікувати від випадкового шуму.</p>
+      <p><strong>Умова:</strong> обидві групи мають нормальний розподіл <strong>і рівні дисперсії</strong>. Перевір обидві умови перед застосуванням!</p>
+      <p><strong>Як:</strong> <code>scipy.stats.ttest_ind(group_a, group_b, equal_var=True)</code></p>
       <p><strong>Результат:</strong> p &lt; 0.05 → різниця реальна, не випадкова.</p>
+      <p><strong>Коли обирати:</strong> якщо дисперсії груп приблизно однакові (перевір Levene test).</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ab-welch"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>t-тест Велча — незалежні вибірки, нормальний розподіл, нерівні дисперсії</h3>
+      <p><strong>Теза:</strong> модифікація t-тесту Стьюдента, яка не вимагає рівності дисперсій (не плутай з нормальністю — нормальність все ще потрібна).</p>
+      <p><strong>Умова:</strong> обидві групи мають нормальний розподіл, але дисперсії можуть відрізнятися.</p>
+      <p><strong>Як:</strong> <code>scipy.stats.ttest_ind(group_a, group_b, equal_var=False)</code></p>
+      <p><strong>Результат:</strong> p &lt; 0.05 → різниця реальна, не випадкова.</p>
+      <p><strong>Коли обирати:</strong> якщо Levene test показує нерівність дисперсій або розміри груп суттєво відрізняються. Вельч надійніший у таких випадках.</p>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-wilcoxon"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
@@ -1163,6 +1217,7 @@
     <div class="detail-panel" id="panel-ab-anova"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
       <h3>ANOVA — 3+ групи, нормальний розподіл</h3>
       <p><strong>Теза:</strong> порівнює дисперсію між групами і всередині груп — якщо між-групова дисперсія значно більша за внутрішньо-групову, різниця реальна.</p>
+      <p><strong>Умови:</strong> нормальний розподіл <strong>і рівність дисперсій</strong> між групами (як і в t-тесті Стьюдента).</p>
       <p><strong>Важливо:</strong> p &lt; 0.05 означає, що <em>хоча б одна</em> група відрізняється — але не вказує яка. Для цього потрібен post-hoc тест (Tukey HSD).</p>
       <p><strong>Як:</strong> <code>scipy.stats.f_oneway(group_a, group_b, group_c)</code></p>
       <p><strong>Після:</strong> порівняй середні — найвище середнє = найкраща кампанія.</p>
@@ -1204,6 +1259,7 @@
         <li>Дані містять викиди — непараметричні тести менш чутливі до них, але не усувають їхній вплив повністю.</li>
       </ul>
       <p><strong>Приклад:</strong> керуєш інтернет-магазином і хочеш порівняти час, який проводять користувачі на сайті після перегляду різних версій продуктової сторінки. Дані мають скошений розподіл, а вибірка невелика — тому t-тест ризикований. Тут підійде <strong>тест Манна-Уітні</strong> як непараметрична альтернатива.</p>
+      <p><strong>Пам'ятай:</strong> перевірка рівності дисперсій потрібна лише для параметричних тестів (t-тест Стьюдента, ANOVA). Непараметричні тести (Манна-Уїтні, Вілкоксона, Крускала-Уолліса) не вимагають рівності дисперсій — це ще одна перевага, коли дані не відповідають параметричним припущенням.</p>
     </div></div>
 
   </div>
@@ -1213,7 +1269,7 @@
   <div class="wrap">
     <div class="scheme-head">
       <span class="scheme-num">06</span>
-      <h2>Розрахунок розміру вибірки</h2>
+      <h2 class="clickable-heading" data-detail="ss-main" data-color="var(--accent-purple)">Розрахунок розміру вибірки</h2>
     </div>
     <p class="scheme-desc">Який обсяг даних потрібен для надійного A/B тесту? Розмір вибірки залежить від трьох параметрів, кожен зі своєю логікою впливу. Якщо n завелике — є три способи скоригувати параметри, кожен з компромісом.</p>
 
@@ -1327,7 +1383,7 @@
         </g>
       </svg>
 
-      <h3 style="font-family:Georgia,serif;font-weight:400;font-size:16px;margin:16px 12px 10px;padding-top:14px;border-top:1px solid var(--line)">Основні параметри статистичного тесту</h3>
+      <h3 class="clickable-heading" data-detail="params-main" data-color="var(--accent-blue)" style="font-family:Georgia,serif;font-weight:400;font-size:16px;margin:16px 12px 10px;padding-top:14px;border-top:1px solid var(--line)">Основні параметри статистичного тесту</h3>
       <p style="font-size:12px;color:var(--ink-soft);margin:0 12px 14px;font-family:var(--mono)">клікни на термін, щоб розкрити пояснення</p>
 
       <div class="term-grid" style="padding:0 4px 8px">
@@ -1341,7 +1397,8 @@
 
       <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'" style="margin:0 12px 10px;padding:8px 16px;background:var(--accent-teal);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">Test Calculator</button>
       <div style="display:none;margin:0 12px 14px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--line);border-radius:8px">
-        <a href="https://cxl.com/ab-test-calculator/" target="_blank" rel="noopener noreferrer" style="display:block;padding:6px 0;color:var(--accent-teal);text-decoration:none;font-weight:500">CXL AB Test Calculator →</a>
+        <a href="https://www.evanmiller.org/ab-testing/sample-size.html" target="_blank" rel="noopener noreferrer" style="display:block;padding:6px 0;color:var(--accent-teal);text-decoration:none;font-weight:500">Evan's Awesome A/B Tools→</a>
+        <a href="https://cxl.com/ab-test-calculator/" target="_blank" rel="noopener noreferrer" style="display:block;padding:6px 0;color:var(--accent-teal);text-decoration:none;font-weight:500">CXL AB Test Calculator→</a>
         <a href="https://rpsychologist.com/d3/nhst/" target="_blank" rel="noopener noreferrer" style="display:block;padding:6px 0;color:var(--accent-teal);text-decoration:none;font-weight:500">rpsychologist NHST Visualization →</a>
       </div>
     </div>
@@ -1412,7 +1469,7 @@
 
     <div class="detail-panel" id="panel-t-alpha"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
       <h3>Рівень значущості (α)</h3>
-      <p>Максимально допустима ймовірність <strong>помилки першого роду</strong> — зробити висновок про наявність ефекту, коли його насправді немає. Значення α задається до початку аналізу, найчастіше 0.05.</p>
+      <p>Максимально допустима ймовірність <strong>Статистична значущість</strong> — це ймовірність не знайти різницю там, де її насправді немає (захист від випадкового шуму). Значення α задається до початку аналізу, найчастіше 0.05.</p>
       <p><strong>Використання:</strong> порівнюється з p-value для прийняття статистичного рішення.</p>
       <p>α = 0.05 при n = 1000 (наприклад) означає: якщо насправді між групами немає різниці, то в 5% випадків тест все одно покаже "є різниця". Тобто при 1000 експериментах із нульовим ефектом приблизно 50 разів буде хибне "значуще".</p>
     </div></div>
@@ -1431,7 +1488,7 @@
 
     <div class="detail-panel" id="panel-t-power"><div class="detail-inner" style="--detail-color:var(--accent-green)">
       <h3>Потужність тесту (1 − β)</h3>
-      <p>Ймовірність <strong>виявити</strong> реальний ефект, якщо він існує. Зазвичай використовують потужність 80% або 90%.</p>
+      <p>Ймовірність <strong>виявити</strong> реальний ефект (реальну різницю), якщо він існує (захист від пропускання ефекту через малу вибірку). Зазвичай використовують потужність 80% або 90%. Потужність тесту (1 − β) — це зазвичай 80% (ймовірність помітити реальну різницю).</p>
       <p><strong>Використання:</strong> визначає, наскільки тест здатний знаходити реальні відмінності.</p>
       <p>1 − β = 0.80 при n = 1000 означає: якщо реальна різниця існує (наприклад 10% → 10.5%), то в 80% випадків тест її виявить. β = 0.20 означає: у 20% випадків навіть при 1000 спостереженнях тест не побачить реальну різницю.</p>
     </div></div>
@@ -1441,6 +1498,19 @@
       <p>Кількість спостережень, що використовуються для аналізу. Впливає на точність статистичних оцінок, рівень випадкового шуму та потужність тесту.</p>
       <p><strong>Використання:</strong> розраховується до початку дослідження на основі α, β та очікуваного ефекту.</p>
       <p>Це кількість спостережень, яка задає рівень шуму даних. При n = 1000 статистичні оцінки стабільніші: p-value менше коливається, а шанс виявити ефект (power) зростає.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ss-main"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>Розрахунок розміру вибірки</h3>
+      <p>Перед запуском тесту визнач мінімальний обсяг даних. Параметри: α=0.05 (рівень значущості), потужність 80%, ефект (бажана різниця між групами). Функція <code>solve_power()</code> з бібліотеки statsmodels розраховує n на групу.</p>
+      <p>Чим менші α і β (жорсткіші вимоги) та чим менша різниця між групами, яку треба вміти виявити — тим більший потрібен розмір вибірки.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-params-main"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Основні параметри статистичного тесту</h3>
+      <p><strong>α (5%)</strong> — ймовірність хибно знайти різницю між групами (наприклад, у середніх або конверсії), коли насправді різниці немає (=0).</p>
+      <p><strong>β (20%)</strong> — ймовірність хибно не знайти різницю між групами (наприклад, у середніх або конверсії), коли насправді різниця дорівнює заданому розміру ефекту (наприклад, 5 в.п. конверсії).</p>
+      <p>Обидва впливають на <strong>n</strong> — чим менші α і β (жорсткіші вимоги) та чим менша різниця між групами (наприклад, у конверсії чи середніх), яку треба вміти виявити, тим більший потрібен розмір вибірки.</p>
     </div></div>
 
     <div class="detail-panel" id="panel-t-es"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
@@ -1457,7 +1527,7 @@
 </footer>
 
 <script>
-document.querySelectorAll('.node, .term-node').forEach(function(node){
+document.querySelectorAll('.node, .term-node, .clickable-heading').forEach(function(node){
   node.addEventListener('click', function(){
     var id = node.getAttribute('data-detail');
     var color = node.getAttribute('data-color');
@@ -1483,6 +1553,8 @@ document.querySelectorAll('.node, .term-node').forEach(function(node){
 });
 
 </script>
+
+<div style="display:none;">Artem Makovskyi</div>
 
 </body>
 </html>
