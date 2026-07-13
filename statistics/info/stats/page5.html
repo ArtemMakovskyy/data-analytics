@@ -304,6 +304,9 @@
         <!-- YES → z-test (L-shaped, clears blocks below) -->
         <path d="M140 132 L64 132 L64 515" fill="none" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow5g)"/>
         <text x="100" y="124" text-anchor="middle" font-size="11" fill="var(--accent-green)">так</text>
+        <text x="144" y="158" text-anchor="start" font-size="9" fill="var(--accent-purple)">• 2 групи → Z-тест</text>
+        <text x="144" y="172" text-anchor="start" font-size="9" fill="var(--accent-purple)">• 3+ груп → χ² тест</text>
+        <text x="144" y="186" text-anchor="start" font-size="9" fill="var(--accent-purple)">• 2×2 + малі частоти → Fisher's Exact</text>
 
         <g class="node" data-detail="ab-ztest" data-color="var(--accent-purple)">
           <rect x="16" y="515" width="96" height="85" rx="7" fill="var(--accent-purple-bg)" stroke="var(--accent-purple)" stroke-width="0.75"/>
@@ -336,7 +339,7 @@
         <g class="node" data-detail="ab-q-norm2">
           <rect x="210" y="270" width="300" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
           <text x="360" y="286" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Нормальний розподіл?</text>
-          <text x="360" y="302" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#999">(shapiro або normaltest)</text>
+          <text x="360" y="302" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#999">(shapiro / normaltest · кожна група або різниці)</text>
         </g>
 
         <!-- нормальний → залежні? -->
@@ -546,40 +549,54 @@
     <div class="detail-panel" id="panel-ab-q-type"><div class="detail-inner">
       <h3>Тип даних: частки чи числа?</h3>
       <p><strong>Частки</strong> — це відсотки або пропорції: конверсія сторінки (10%), CTR банера (3%), частка покупців. <strong>Числові дані</strong> — це вимірювані величини: сума покупки, час на сайті, кількість кліків.</p>
+      <p><strong>Для часток:</strong> 2 групи → Z-тест пропорцій; 3+ групи → χ² тест незалежності; 2×2 таблиця + малі частоти → Fisher's Exact Test.</p>
       <p><strong>Чому важливо розрізняти:</strong> для часток і чисел використовуються принципово різні тести — і змішувати їх не можна.</p>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-ztest"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
-      <h3>Z-тест пропорцій</h3>
-      <p><strong>Коли:</strong> порівнюємо дві частки — наприклад, конверсію сторінки A (10%) і B (10.5%). Перевірку нормальності не проводимо — тест апріорі для часток.</p>
-      <p><strong>Що робить:</strong> порівнює фактичну різницю між частками з очікуваною випадковою різницею.</p>
-      <p><strong>Як:</strong> <code>statsmodels.stats.proportions_ztest([покупки_A, покупки_B], [перегляди_A, перегляди_B])</code></p>
-      <p><strong>Результат:</strong> p &lt; 0.05 → різниця в конверсії реальна, не шум.</p>
+      <h3>Тести для часток (пропорцій)</h3>
+      <p><strong>2 групи → Z-тест пропорцій</strong><br>Порівнює дві частки — конверсію сторінки A (10%) і B (10.5%). Перевірку нормальності не проводимо — тест апріорі для часток.<br><code>statsmodels.stats.proportions_ztest([покупки_A, покупки_B], [перегляди_A, перегляди_B])</code></p>
+      <p><strong>3+ групи → χ² тест незалежності</strong><br>Порівнює частки між трьома і більше групами. Перевіряє, чи залежить категорійна змінна від груп.<br><code>scipy.stats.chi2_contingency(table)</code></p>
+      <p><strong>2×2 таблиця + малі очікувані частоти (&lt;5) → Fisher's Exact Test</strong><br>Коли очікувані частоти в таблиці спряженості 2×2 менші за 5, χ² тест може бути неточним. Використовуй <code>scipy.stats.fisher_exact(table)</code>.</p>
+      <p><strong>Результат:</strong> p &lt; 0.05 → різниця в частках реальна, не шум.</p>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-q-count"><div class="detail-inner">
       <h3>Кількість груп — ключове розгалуження</h3>
-      <p><strong>2 групи</strong> → t-тест або Mann-Whitney / Wilcoxon.</p>
-      <p><strong>3+ групи</strong> → ANOVA або Kruskal-Wallis. Не можна просто запустити кілька t-тестів поспіль — при 3 парах ризик хибно позитивного результату зростає з 5% до ~14%.</p>
+      <p><strong>Числові дані:</strong></p>
+      <ul>
+        <li><strong>2 групи</strong> → t-тест або Mann-Whitney / Wilcoxon.</li>
+        <li><strong>3+ групи</strong> → ANOVA або Kruskal-Wallis.</li>
+      </ul>
+      <p><strong>Частки (пропорції):</strong></p>
+      <ul>
+        <li><strong>2 групи</strong> → Z-тест пропорцій.</li>
+        <li><strong>3+ групи</strong> → χ² тест незалежності (або Fisher's Exact Test для 2×2 при малих частотах).</li>
+      </ul>
+      <p>Не можна просто запустити кілька t-тестів поспіль — при 3 парах ризик хибно позитивного результату зростає з 5% до ~14%.</p>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-q-norm2"><div class="detail-inner">
       <h3>Перевірка нормальності (2 групи)</h3>
       <p><strong>Як перевірити:</strong> мала вибірка (n &lt; 30) → <code>shapiro()</code>; велика → <code>normaltest()</code>.</p>
-      <p><strong>Правило:</strong> якщо <strong>хоча б одна</strong> з двох груп ненормальна — обирай непараметричний тест (Mann-Whitney або Wilcoxon).</p>
+      <p><strong>Важливо:</strong> спосіб перевірки залежить від типу вибірок:</p>
+      <ul>
+        <li><strong>Незалежні вибірки:</strong> перевіряється нормальність <em>кожної групи окремо</em>. Якщо хоча б одна група ненормальна → Mann-Whitney U.</li>
+        <li><strong>Залежні вибірки (парні):</strong> перевіряється нормальність <em>різниць між парами</em>. Якщо різниці ненормальні → тест Вілкоксона.</li>
+      </ul>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-q-dep-n"><div class="detail-inner">
       <h3>Залежні vs незалежні (нормальний розподіл)</h3>
-      <p><strong>Залежні:</strong> одні й ті самі користувачі виміряні двічі — до і після редизайну. → парний t-тест.</p>
-      <p><strong>Незалежні:</strong> різні люди в групах A і B. → незалежний t-тест <code>ttest_ind()</code>.</p>
+      <p><strong>Залежні:</strong> одні й ті самі користувачі виміряні двічі — до і після редизайну. → перевір нормальність <em>різниць між парами</em>. Якщо різниці нормальні → парний t-тест.</p>
+      <p><strong>Незалежні:</strong> різні люди в групах A і B. → перевір нормальність <em>кожної групи окремо</em>. Якщо обидві нормальні → перевір рівність дисперсій, далі t-тест Стьюдента або Велча.</p>
       <p><strong>Чому важливо:</strong> парний тест потужніший за однакового n, бо виключає міжособистісну варіативність.</p>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-q-dep-nn"><div class="detail-inner">
       <h3>Залежні vs незалежні (ненормальний розподіл)</h3>
-      <p><strong>Залежні:</strong> та сама аудиторія до/після → тест Вілкоксона (непараметричний аналог парного t-тесту).</p>
-      <p><strong>Незалежні:</strong> різні сегменти → Mann-Whitney U (непараметричний аналог незалежного t-тесту).</p>
+      <p><strong>Залежні:</strong> та сама аудиторія до/після. Якщо різниці між парами ненормальні → тест Вілкоксона (непараметричний аналог парного t-тесту).</p>
+      <p><strong>Незалежні:</strong> різні сегменти. Якщо хоча б одна група ненормальна → Mann-Whitney U (непараметричний аналог незалежного t-тесту).</p>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-var"><div class="detail-inner">
@@ -592,8 +609,9 @@
     </div></div>
 
     <div class="detail-panel" id="panel-ab-paired-t"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
-      <h3>Парний t-тест — залежні вибірки, нормальний розподіл</h3>
+      <h3>Парний t-тест — залежні вибірки, нормальні різниці</h3>
       <p><strong>Теза:</strong> порівнює середнє значення різниць між парами, а не самі групи — тому потужніший за незалежний t-тест при однаковому n.</p>
+      <p><strong>Умова:</strong> нормальність застосовується до <em>різниць між парами</em>, а не до кожної групи окремо. Перевір <code>shapiro(after — before)</code>.</p>
       <p><strong>Приклад:</strong> продажі 15 магазинів до і після зміни стратегії.</p>
       <p><strong>Як:</strong> <code>scipy.stats.ttest_rel(before, after)</code></p>
       <p><strong>Результат:</strong> p &lt; 0.05 → зміна після втручання статистично значуща.</p>
@@ -602,7 +620,7 @@
     <div class="detail-panel" id="panel-ab-ttest"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
       <h3>t-тест Стьюдента — незалежні вибірки, нормальний розподіл, рівні дисперсії</h3>
       <p><strong>Теза:</strong> класичний t-тест для незалежних вибірок. Перевіряє, чи різниця між середніми двох груп більша, ніж можна очікувати від випадкового шуму.</p>
-      <p><strong>Умова:</strong> обидві групи мають нормальний розподіл <strong>і рівні дисперсії</strong>. Перевір обидві умови перед застосуванням!</p>
+      <p><strong>Умови:</strong> незалежні спостереження, <strong>кожна група окремо</strong> має нормальний розподіл (перевір <code>shapiro()</code> для кожної) <strong>і рівні дисперсії</strong> (Levene test).</p>
       <p><strong>Як:</strong> <code>scipy.stats.ttest_ind(group_a, group_b, equal_var=True)</code></p>
       <p><strong>Результат:</strong> p &lt; 0.05 → різниця реальна, не випадкова.</p>
       <p><strong>Коли обирати:</strong> якщо дисперсії груп приблизно однакові (перевір Levene test).</p>
@@ -611,15 +629,16 @@
     <div class="detail-panel" id="panel-ab-welch"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
       <h3>t-тест Велча — незалежні вибірки, нормальний розподіл, нерівні дисперсії</h3>
       <p><strong>Теза:</strong> модифікація t-тесту Стьюдента, яка не вимагає рівності дисперсій (не плутай з нормальністю — нормальність все ще потрібна).</p>
-      <p><strong>Умова:</strong> обидві групи мають нормальний розподіл, але дисперсії можуть відрізнятися.</p>
+      <p><strong>Умови:</strong> незалежні спостереження, <strong>кожна група окремо</strong> має нормальний розподіл, але дисперсії можуть відрізнятися.</p>
       <p><strong>Як:</strong> <code>scipy.stats.ttest_ind(group_a, group_b, equal_var=False)</code></p>
       <p><strong>Результат:</strong> p &lt; 0.05 → різниця реальна, не випадкова.</p>
       <p><strong>Коли обирати:</strong> якщо Levene test показує нерівність дисперсій або розміри груп суттєво відрізняються. Вельч надійніший у таких випадках.</p>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-wilcoxon"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
-      <h3>Тест Вілкоксона — залежні вибірки, ненормальний розподіл</h3>
+      <h3>Тест Вілкоксона — залежні вибірки, ненормальні різниці</h3>
       <p><strong>Теза:</strong> непараметричний аналог парного t-тесту — аналізує знаки і ранги різниць між парами, а не їхні абсолютні значення.</p>
+      <p><strong>Коли:</strong> коли різниці між парами мають ненормальний розподіл (перевір <code>shapiro(after — before)</code>).</p>
       <p><strong>Приклад:</strong> конверсія в % до і після редизайну на тих самих 7 сторінках.</p>
       <p><strong>Як:</strong> <code>scipy.stats.wilcoxon(before, after)</code></p>
       <p><strong>Результат:</strong> p &lt; 0.05 → зміна значуща.</p>
@@ -628,6 +647,7 @@
     <div class="detail-panel" id="panel-ab-mannwhitney"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
       <h3>Mann-Whitney U — незалежні вибірки, ненормальний розподіл</h3>
       <p><strong>Теза:</strong> перевіряє, чи значення однієї групи систематично вищі або нижчі, ніж у іншої, — без будь-яких припущень про розподіл.</p>
+      <p><strong>Коли:</strong> незалежні вибірки, хоча б одна група має ненормальний розподіл.</p>
       <p><strong>Підходить також для порядкових даних</strong> — рейтинги, оцінки 1–5.</p>
       <p><strong>Як:</strong> <code>scipy.stats.mannwhitneyu(group_a, group_b)</code></p>
       <p><strong>Результат:</strong> p &lt; 0.05 → групи статистично значуще відрізняються.</p>
@@ -635,13 +655,14 @@
 
     <div class="detail-panel" id="panel-ab-q-norm3"><div class="detail-inner">
       <h3>Нормальність для 3+ груп</h3>
-      <p>Перевіряй кожну групу окремо. Якщо <strong>хоча б одна</strong> ненормальна — обирай Kruskal-Wallis замість ANOVA.</p>
-      <p>Якщо всі групи нормальні — це ще не фінал. Перед ANOVA потрібно додатково перевірити <strong>рівність дисперсій</strong> між групами, як і перед t-тестом.</p>
+      <p>Для <strong>незалежних</strong> вибірок перевіряй кожну групу окремо. Якщо <strong>хоча б одна</strong> ненормальна — обирай Kruskal-Wallis замість ANOVA.</p>
+      <p>Для <strong>залежних</strong> повторних вимірів (RM-ANOVA) перевіряється багатовимірна нормальність або нормальність різниць — це виходить за рамки даної схеми.</p>
+      <p>Якщо всі групи нормальні — це ще не фінал. Перед ANOVA потрібно додатково перевірити <strong>рівність дисперсій</strong> та <strong>незалежність спостережень</strong>.</p>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-var3"><div class="detail-inner">
       <h3>Перевірка рівності дисперсій для ANOVA (Levene test)</h3>
-      <p><strong>Теза:</strong> так само, як перед вибором між t-тестом Стьюдента та Велча, перед ANOVA потрібно перевірити, чи дисперсії <strong>усіх</strong> груп однакові.</p>
+      <p><strong>Теза:</strong> так само, як перед вибором між t-тестом Стьюдента та Велча, перед ANOVA потрібно перевірити, чи дисперсії <strong>усіх</strong> груп однакові. Це третя умова після незалежності спостережень та нормальності.</p>
       <p><strong>Як перевірити:</strong> тест Левена (<code>scipy.stats.levene(group_a, group_b, group_c)</code>) або тест Бартлетта (<code>scipy.stats.bartlett(group_a, group_b, group_c)</code>).</p>
       <p><strong>Інтерпретація:</strong> p ≥ 0.05 → дисперсії рівні → звичайна ANOVA; p &lt; 0.05 → дисперсії нерівні → ANOVA Велча.</p>
       <p><strong>Важливо:</strong> якщо розміри груп сильно відрізняються — надійніше одразу брати ANOVA Велча.</p>
@@ -650,17 +671,26 @@
     <div class="detail-panel" id="panel-ab-anova"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
       <h3>ANOVA — 3+ групи, нормальний розподіл, рівні дисперсії</h3>
       <p><strong>Теза:</strong> порівнює дисперсію між групами і всередині груп — якщо між-групова дисперсія значно більша за внутрішньо-групову, різниця реальна.</p>
-      <p><strong>Умови:</strong> нормальний розподіл <strong>і рівність дисперсій</strong> між групами (як і в t-тесті Стьюдента). Обидві умови перевіряються окремими кроками вище.</p>
+      <p><strong>Три обов'язкові умови:</strong></p>
+      <ol>
+        <li><strong>Незалежність спостережень</strong> — кожне спостереження належить лише одній групі, групи не пов'язані між собою.</li>
+        <li><strong>Нормальний розподіл</strong> — кожної групи окремо (перевір <code>shapiro()</code> або <code>normaltest()</code>).</li>
+        <li><strong>Рівність дисперсій</strong> — між групами (перевір <code>levene()</code> або <code>bartlett()</code>).</li>
+      </ol>
       <p><strong>Важливо:</strong> p &lt; 0.05 означає, що <em>хоча б одна</em> група відрізняється — але не вказує яка. Для цього потрібен post-hoc тест (Tukey HSD).</p>
       <p><strong>Як:</strong> <code>scipy.stats.f_oneway(group_a, group_b, group_c)</code></p>
-      <p><strong>Коли обирати:</strong> якщо Levene test показує, що дисперсії груп приблизно однакові.</p>
-      <p><strong>Після:</strong> порівняй середні — найвище середнє = найкраща кампанія.</p>
+      <p><strong>Коли обирати:</strong> якщо всі три умови виконані.</p>
     </div></div>
 
     <div class="detail-panel" id="panel-ab-welch-anova"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
       <h3>ANOVA Велча — 3+ групи, нормальний розподіл, нерівні дисперсії</h3>
       <p><strong>Теза:</strong> модифікація ANOVA, яка не вимагає рівності дисперсій між групами (так само як t-тест Велча не вимагає її для двох груп). Нормальність розподілу все ще потрібна.</p>
-      <p><strong>Умова:</strong> усі групи мають нормальний розподіл, але дисперсії можуть суттєво відрізнятися.</p>
+      <p><strong>Умови:</strong></p>
+      <ol>
+        <li><strong>Незалежність спостережень</strong> — кожне спостереження належить лише одній групі.</li>
+        <li><strong>Нормальний розподіл</strong> — кожної групи окремо.</li>
+        <li>Дисперсії <strong>можуть бути нерівними</strong> — саме тому обираємо ANOVA Велча замість звичайної.</li>
+      </ol>
       <p><strong>Як:</strong> <code>pingouin.welch_anova(dv='value', between='group', data=df)</code> (у scipy прямого еквіваленту немає).</p>
       <p><strong>Результат:</strong> p &lt; 0.05 → хоча б одна група статистично відрізняється.</p>
       <p><strong>Коли обирати:</strong> якщо Levene test показує нерівність дисперсій або розміри груп суттєво відрізняються — Велча надійніша в таких випадках.</p>
