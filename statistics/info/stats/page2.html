@@ -1,0 +1,441 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сторінка 2 · Карта статистичного аналізу даних + A/B тестування</title>
+<style>
+
+  :root{
+    --bg:#F6F4EF;
+    --ink:#1F2421;
+    --ink-soft:#5B6059;
+    --line:#D8D4C8;
+    --card:#FFFFFF;
+    --accent-blue:#2F5D8A;
+    --accent-blue-bg:#E6F0F8;
+    --accent-coral:#B5562F;
+    --accent-coral-bg:#FBEBE2;
+    --accent-teal:#1E7A63;
+    --accent-teal-bg:#E2F2EC;
+    --accent-purple:#5B4B8A;
+    --accent-purple-bg:#ECE8F6;
+    --accent-amber:#9A6B16;
+    --accent-amber-bg:#FAF0DB;
+    --accent-green:#3B7A23;
+    --accent-green-bg:#EBF4E3;
+    --accent-red:#A23A2E;
+    --accent-red-bg:#F8E5E2;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+  /* Scheme 06 colour classes */
+  .c-gray rect{fill:var(--card);stroke:var(--line)}
+  .c-gray text{fill:var(--ink)}
+  .c-gray polygon{fill:var(--card);stroke:var(--line)}
+  .c-blue rect{fill:var(--accent-blue-bg);stroke:var(--accent-blue)}
+  .c-blue text{fill:var(--accent-blue)}
+  .c-purple rect{fill:var(--accent-purple-bg);stroke:var(--accent-purple)}
+  .c-purple text{fill:var(--accent-purple)}
+  .c-teal rect{fill:var(--accent-teal-bg);stroke:var(--accent-teal)}
+  .c-teal text{fill:var(--accent-teal)}
+  .c-green rect{fill:var(--accent-green-bg);stroke:var(--accent-green)}
+  .c-green text{fill:var(--accent-green)}
+  .c-amber rect{fill:var(--accent-amber-bg);stroke:var(--accent-amber)}
+  .c-amber text{fill:var(--accent-amber)}
+  .c-coral rect{fill:var(--accent-coral-bg);stroke:var(--accent-coral)}
+  .c-coral text{fill:var(--accent-coral)}
+  .th{font-weight:600;font-size:13px}
+  .ts{font-size:10px;opacity:0.85}
+  @font-face{
+    font-family:'Fraunces';
+    src: local('Georgia');
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    line-height:1.5;
+    padding-bottom:80px;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+
+  header.top{
+    padding:64px 24px 40px;
+    border-bottom:1px solid var(--line);
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.015), transparent);
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 14px;
+  }
+  h1{
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight:400;
+    font-size:clamp(32px, 5vw, 48px);
+    line-height:1.08;
+    margin:0 0 16px;
+    letter-spacing:-0.01em;
+  }
+  h1 em{font-style:italic; color:var(--accent-coral);}
+  .sub{
+    font-size:17px;
+    color:var(--ink-soft);
+    max-width:620px;
+    margin:0;
+  }
+
+  nav.toc{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:32px;
+  }
+  nav.toc a{
+    font-family: var(--mono);
+    font-size:12px;
+    text-decoration:none;
+    color:var(--ink);
+    border:1px solid var(--line);
+    padding:7px 12px;
+    border-radius:100px;
+    background:var(--card);
+    transition:border-color .15s, background .15s;
+  }
+  nav.toc a:hover{border-color:var(--ink); background:#fff;}
+
+  section.scheme{
+    padding:56px 24px;
+    border-bottom:1px solid var(--line);
+    scroll-margin-top:24px;
+  }
+  section.scheme:nth-of-type(odd){background:rgba(0,0,0,0.012);}
+
+  .scheme-head{
+    display:flex;
+    align-items:baseline;
+    gap:16px;
+    margin-bottom:8px;
+  }
+  .scheme-num{
+    font-family: var(--mono);
+    font-size:13px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  h2{
+    font-family: Georgia, serif;
+    font-weight:400;
+    font-size:28px;
+    margin:0;
+    letter-spacing:-0.005em;
+  }
+  .scheme-desc{
+    color:var(--ink-soft);
+    font-size:15px;
+    margin:8px 0 28px;
+    max-width:640px;
+  }
+
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:8px;
+    overflow:hidden;
+  }
+  svg{display:block; width:100%; height:auto;}
+
+  .node{cursor:pointer;}
+  .node rect{transition:filter .15s, transform .15s;}
+  .node:hover rect{filter:brightness(0.96);}
+  .node:active rect{transform:scale(0.99);}
+  .node text{pointer-events:none;}
+  .clickable-heading{cursor:pointer;transition:opacity .15s;}
+  .clickable-heading:hover{opacity:0.7;}
+
+  .hint{
+    font-family: var(--mono);
+    font-size:11px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin-top:14px;
+    letter-spacing:0.02em;
+  }
+  .hint .ti{font-style:normal;}
+
+  /* Glossary term nodes (HTML blocks for section 6) */
+  .term-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:28px}
+  .term-node{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;transition:border-color .15s, background .15s;font-size:13px;font-weight:600;font-family:var(--mono);text-align:center;color:var(--ink)}
+  .term-node:hover{border-color:var(--ink);background:#fff}
+  .term-badge{font-size:10px;padding:1px 7px;border-radius:4px;font-weight:600}
+  .term-badge.alpha{background:var(--accent-blue-bg);color:var(--accent-blue)}
+  .term-badge.pvalue{background:var(--accent-purple-bg);color:var(--accent-purple)}
+  .term-badge.beta{background:var(--accent-coral-bg);color:var(--accent-coral)}
+  .term-badge.power{background:var(--accent-green-bg);color:var(--accent-green)}
+  .term-badge.n{background:var(--accent-teal-bg);color:var(--accent-teal)}
+  .term-badge.es{background:var(--accent-amber-bg);color:var(--accent-amber)}
+
+  /* Expandable detail panel */
+  .detail-panel{
+    margin-top:0;
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s ease, margin-top .35s ease;
+  }
+  .detail-panel.open{
+    margin-top:18px;
+    max-height:600px;
+  }
+  .detail-inner{
+    border:1px solid var(--line);
+    border-left:4px solid var(--detail-color, var(--accent-blue));
+    border-radius:10px;
+    padding:20px 22px;
+    background:var(--card);
+  }
+  .detail-inner h3{
+    font-family: Georgia, serif;
+    font-weight:400;
+    font-size:18px;
+    margin:0 0 10px;
+    color:var(--detail-color, var(--accent-blue));
+  }
+  .detail-inner p{
+    margin:0 0 10px;
+    font-size:14.5px;
+    color:var(--ink);
+  }
+  .detail-inner p:last-child{margin-bottom:0;}
+  .detail-inner code{
+    font-family:var(--mono);
+    background:rgba(0,0,0,0.05);
+    padding:1px 6px;
+    border-radius:4px;
+    font-size:13px;
+  }
+  .detail-inner ul{margin:8px 0 0; padding-left:18px;}
+  .detail-inner li{font-size:14.5px; margin-bottom:5px;}
+
+  footer{
+    padding:40px 24px 20px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13px;
+    font-family:var(--mono);
+  }
+
+  @media (max-width: 640px){
+    header.top{padding:48px 20px 32px;}
+    section.scheme{padding:40px 20px;}
+    h2{font-size:22px;}
+  }
+
+.page-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:20px 0;margin:16px 0}.page-nav .nav-btn{font-family:var(--mono);font-size:13px;text-decoration:none;color:var(--ink);border:1px solid var(--line);padding:8px 14px;border-radius:6px;background:var(--card);transition:border-color .15s,background .15s;cursor:pointer;user-select:none}.page-nav .nav-btn:hover{border-color:var(--ink);background:#fff}.page-nav .nav-btn.active{background:var(--ink);color:#fff;border-color:var(--ink)}.page-nav .nav-btn.disabled{opacity:0.35;cursor:default}.page-nav .nav-btn.disabled:hover{border-color:var(--line);background:var(--card)}.nav-footer-sep{border:none;border-top:1px solid var(--line);margin:8px 0 0}
+</style>
+</head>
+<body>
+
+<header class="top">
+
+  <div class="wrap">
+    <p class="eyebrow">Карта статистичного аналізу · 7 схем</p>
+    <h1>Як рухатись від <em>сирих даних</em> до висновку</h1>
+    <p class="sub">Клікай на блоки в кожній схемі — розкриється коротке пояснення логіки рішення. Це не підручник, а маршрут: розподіл → викиди → вибірка → надійність → кореляція → A/B тест → розмір вибірки.</p>
+    <nav class="toc">
+      <a href="index.html">0. Загальна карта</a>
+      <a href="page1.html">1. Викиди</a>
+      <a href="page2.html">2. Вибірка</a>
+      <a href="page3.html">3. Нормальність і значущість</a>
+      <a href="page4.html">4. Кореляція</a>
+      <a href="page5.html">5. A/B тестування</a>
+      <a href="page6.html">6. Розмір вибірки</a>
+    </nav>
+  </div>
+
+</header>
+
+<div class="wrap">
+<div class="page-nav"><a class="nav-btn" href="page1.html">« Назад</a><a class="nav-btn" href="index.html">0</a><a class="nav-btn" href="page1.html">1</a><a class="nav-btn active" href="page2.html">2</a><a class="nav-btn" href="page3.html">3</a><a class="nav-btn" href="page4.html">4</a><a class="nav-btn" href="page5.html">5</a><a class="nav-btn" href="page6.html">6</a><a class="nav-btn" href="page3.html">Вперед »</a></div>
+</div>
+
+<section class="scheme" id="s2">
+
+  <div class="wrap">
+    <div class="scheme-head">
+      <span class="scheme-num">02</span>
+      <h2>Методи формування вибірки</h2>
+    </div>
+    <p class="scheme-desc">Який метод семплування обрати залежно від структури популяції.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 680 480">
+        <defs><marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+        <g class="node" data-detail="s-start">
+          <rect x="220" y="30" width="240" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="52" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#333">Велика популяція даних</text>
+        </g>
+        <line x1="340" y1="74" x2="340" y2="100" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+        <g class="node" data-detail="s-q">
+          <rect x="160" y="100" width="360" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="122" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Чи є природні групи / структура в даних?</text>
+        </g>
+
+        <line x1="220" y1="144" x2="100" y2="180" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="120" y="168" text-anchor="middle" font-size="11" fill="#777">немає</text>
+        <line x1="300" y1="144" x2="280" y2="180" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="270" y="168" text-anchor="middle" font-size="11" fill="#777">категорії</text>
+        <line x1="420" y1="144" x2="470" y2="180" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="475" y="168" text-anchor="middle" font-size="11" fill="#777">впорядкований ряд</text>
+        <line x1="500" y1="144" x2="620" y2="180" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="600" y="168" text-anchor="middle" font-size="11" fill="#777">регіони</text>
+
+        <g class="node" data-detail="s-random" data-color="var(--accent-teal)">
+          <rect x="20" y="180" width="160" height="56" rx="8" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="100" y="200" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-teal)">Простий випадковий</text>
+          <text x="100" y="220" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-teal)" opacity="0.85">.sample(n=...)</text>
+        </g>
+
+        <g class="node" data-detail="s-strat" data-color="var(--accent-teal)">
+          <rect x="195" y="180" width="160" height="56" rx="8" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="275" y="200" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-teal)">Стратифікований</text>
+          <text x="275" y="220" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-teal)" opacity="0.85">.groupby().sample()</text>
+        </g>
+
+        <g class="node" data-detail="s-sys" data-color="var(--accent-teal)">
+          <rect x="370" y="180" width="160" height="56" rx="8" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="450" y="200" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-teal)">Систематичний</text>
+          <text x="450" y="220" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-teal)" opacity="0.85">.iloc[::n]</text>
+        </g>
+
+        <g class="node" data-detail="s-cluster" data-color="var(--accent-teal)">
+          <rect x="545" y="180" width="135" height="56" rx="8" fill="var(--accent-teal-bg)" stroke="var(--accent-teal)" stroke-width="0.75"/>
+          <text x="612" y="200" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="var(--accent-teal)">Кластерний</text>
+          <text x="612" y="220" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-teal)" opacity="0.85">obrati regions</text>
+        </g>
+
+        <line x1="100" y1="236" x2="340" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <line x1="275" y1="236" x2="340" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <line x1="450" y1="236" x2="340" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <line x1="612" y1="236" x2="340" y2="280" stroke="#999" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+        <g class="node" data-detail="s-small">
+          <rect x="200" y="280" width="280" height="44" rx="8" fill="#fff" stroke="#999" stroke-width="0.75"/>
+          <text x="340" y="302" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#555">Вибірка мала / розподіл невідомий?</text>
+        </g>
+
+        <line x1="280" y1="324" x2="220" y2="365" stroke="var(--accent-coral)" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="225" y="348" text-anchor="middle" font-size="11" fill="var(--accent-coral)">ні</text>
+        <line x1="400" y1="324" x2="460" y2="365" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow2)"/>
+        <text x="470" y="348" text-anchor="middle" font-size="11" fill="var(--accent-green)">так</text>
+
+        <g class="node" data-detail="s-done" data-color="var(--accent-green)">
+          <rect x="80" y="365" width="280" height="50" rx="8" fill="var(--accent-green-bg)" stroke="var(--accent-green)" stroke-width="0.75"/>
+          <text x="220" y="383" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-green)">Вибірка готова до аналізу</text>
+          <text x="220" y="401" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-green)" opacity="0.85">переходь до кроку «надійність»</text>
+        </g>
+
+        <g class="node" data-detail="s-bootstrap" data-color="var(--accent-purple)">
+          <rect x="380" y="365" width="280" height="50" rx="8" fill="var(--accent-purple-bg)" stroke="var(--accent-purple)" stroke-width="0.75"/>
+          <text x="520" y="383" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="var(--accent-purple)">Bootstrap-метод</text>
+          <text x="520" y="401" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--accent-purple)" opacity="0.85">повторна вибірка із заміщенням</text>
+        </g>
+
+        <text x="340" y="448" text-anchor="middle" font-size="11" fill="#888" font-family="monospace">обидва шляхи ведуть до оцінки довірчого інтервалу</text>
+      </svg>
+    </div>
+    <p class="hint">клікни на блок схеми</p>
+
+    <div class="detail-panel" id="panel-s-start"><div class="detail-inner">
+      <h3>Велика популяція</h3>
+      <p>Якщо аналізувати весь набір даних дорого чи довго — вибираєш репрезентативну вибірку замість усієї популяції.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-q"><div class="detail-inner">
+      <h3>Структура популяції визначає метод</h3>
+      <p>Перш ніж обирати техніку семплування, з'ясуй: чи дані однорідні, чи поділені на категорії, чи мають природний порядок, чи розкидані по регіонах/кластерах.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-random"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Простий випадковий вибір</h3>
+      <p>Кожен елемент має однакову ймовірність потрапити у вибірку. Найпростіший варіант, коли немає сенсу ділити дані на групи.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-strat"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Стратифікована вибірка</h3>
+      <p>Дані діляться на групи (страти) за ознакою — наприклад, категорія товару — і з кожної береться однакова кількість елементів.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-sys"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Систематична вибірка</h3>
+      <p>Береться кожен n-й елемент послідовності. Зручно для впорядкованих за часом даних (наприклад, кожна 10-та транзакція).</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-cluster"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Кластерна вибірка</h3>
+      <p>Популяція ділиться на кластери (наприклад, регіони), і кілька цілих кластерів вибираються випадково для повного аналізу.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-small"><div class="detail-inner">
+      <h3>Перевір розмір та розподіл</h3>
+      <p>Якщо вибірка мала або форма розподілу популяції невідома — стандартні формули можуть бути неточними. Тоді на допомогу приходить bootstrap.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-done"><div class="detail-inner" style="--detail-color:var(--accent-green)">
+      <h3>Готово до аналізу</h3>
+      <p>Якщо вибірка достатньо велика і репрезентативна — можна одразу переходити до оцінки довірчих інтервалів і значущості.</p>
+    </div></div>
+    <div class="detail-panel" id="panel-s-bootstrap"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>Bootstrap</h3>
+      <p>Багаторазова вибірка із заміщенням із наявних даних. Для кожної підвибірки рахуєш статистику (середнє, медіану) — отримуєш розподіл оцінок, навіть не знаючи справжній розподіл популяції.</p>
+    </div></div>
+  </div>
+
+</section>
+
+<div class="wrap">
+<hr class="nav-footer-sep">
+<div class="page-nav"><a class="nav-btn" href="page1.html">« Назад</a><a class="nav-btn" href="index.html">0</a><a class="nav-btn" href="page1.html">1</a><a class="nav-btn active" href="page2.html">2</a><a class="nav-btn" href="page3.html">3</a><a class="nav-btn" href="page4.html">4</a><a class="nav-btn" href="page5.html">5</a><a class="nav-btn" href="page6.html">6</a><a class="nav-btn" href="page3.html">Вперед »</a></div>
+</div>
+
+<footer>
+
+  складено на основі лекційного матеріалу з аналізу даних
+
+</footer>
+
+<script>
+
+document.querySelectorAll('.node, .term-node, .clickable-heading').forEach(function(node){
+  node.addEventListener('click', function(){
+    var id = node.getAttribute('data-detail');
+    var color = node.getAttribute('data-color');
+    var panel = document.getElementById('panel-' + id);
+    if(!panel) return;
+
+    var wasOpen = panel.classList.contains('open');
+
+    // close all panels within the same section
+    var section = node.closest('section');
+    section.querySelectorAll('.detail-panel.open').forEach(function(p){
+      p.classList.remove('open');
+    });
+
+    if(!wasOpen){
+      if(color){ panel.querySelector('.detail-inner').style.setProperty('--detail-color', color); }
+      panel.classList.add('open');
+      setTimeout(function(){
+        panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+      }, 200);
+    }
+  });
+});
+
+
+</script>
+
+<div style="display:none;">Artem Makovskyi</div>
+
+</body>
+</html>
