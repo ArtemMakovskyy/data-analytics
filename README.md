@@ -12,6 +12,7 @@ Select a category to view the relevant case studies and code:
 * [📊 Tableau Projects](tableau-projects/Tableau_Projects.md) — Interactive business dashboards, KPI visualization, and metrics analysis.
 * [🐍 Python Projects](python-projects/Python_Projects.md) — Exploratory data analysis, data cleaning, and statistical visualization.
 * [🖥️ PC Analyzer](pc-analyzer/PC_Analyzer.md) — ETL pipeline, price/performance analytics, and Excel reporting across 500+ PC components.
+* [📈 Statistics & A/B Testing Guide](statistics/Statistics_Guide.md) — Interactive decision map for statistical analysis, hypothesis testing, and experimental design.
 
 ---
 
