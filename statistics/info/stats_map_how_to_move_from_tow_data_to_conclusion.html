@@ -1,241 +1,276 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Карта статистичного аналізу даних + A/B тестування</title>
-<style>
-  :root{
-    --bg:#F6F4EF;
-    --ink:#1F2421;
-    --ink-soft:#5B6059;
-    --line:#D8D4C8;
-    --card:#FFFFFF;
-    --accent-blue:#2F5D8A;
-    --accent-blue-bg:#E6F0F8;
-    --accent-coral:#B5562F;
-    --accent-coral-bg:#FBEBE2;
-    --accent-teal:#1E7A63;
-    --accent-teal-bg:#E2F2EC;
-    --accent-purple:#5B4B8A;
-    --accent-purple-bg:#ECE8F6;
-    --accent-amber:#9A6B16;
-    --accent-amber-bg:#FAF0DB;
-    --accent-green:#3B7A23;
-    --accent-green-bg:#EBF4E3;
-    --accent-red:#A23A2E;
-    --accent-red-bg:#F8E5E2;
-    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
-  }
-  /* Scheme 06 colour classes */
-  .c-gray rect{fill:var(--card);stroke:var(--line)}
-  .c-gray text{fill:var(--ink)}
-  .c-gray polygon{fill:var(--card);stroke:var(--line)}
-  .c-blue rect{fill:var(--accent-blue-bg);stroke:var(--accent-blue)}
-  .c-blue text{fill:var(--accent-blue)}
-  .c-purple rect{fill:var(--accent-purple-bg);stroke:var(--accent-purple)}
-  .c-purple text{fill:var(--accent-purple)}
-  .c-teal rect{fill:var(--accent-teal-bg);stroke:var(--accent-teal)}
-  .c-teal text{fill:var(--accent-teal)}
-  .c-green rect{fill:var(--accent-green-bg);stroke:var(--accent-green)}
-  .c-green text{fill:var(--accent-green)}
-  .c-amber rect{fill:var(--accent-amber-bg);stroke:var(--accent-amber)}
-  .c-amber text{fill:var(--accent-amber)}
-  .c-coral rect{fill:var(--accent-coral-bg);stroke:var(--accent-coral)}
-  .c-coral text{fill:var(--accent-coral)}
-  .th{font-weight:600;font-size:13px}
-  .ts{font-size:10px;opacity:0.85}
-  @font-face{
-    font-family:'Fraunces';
-    src: local('Georgia');
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--bg);
-    color:var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-    line-height:1.5;
-    padding-bottom:80px;
-  }
-  .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Карта статистичного аналізу даних + A/B тестування</title>
+  <style>
+    :root{
+      --bg:#F6F4EF;
+      --ink:#1F2421;
+      --ink-soft:#5B6059;
+      --line:#D8D4C8;
+      --card:#FFFFFF;
+      --accent-blue:#2F5D8A;
+      --accent-blue-bg:#E6F0F8;
+      --accent-coral:#B5562F;
+      --accent-coral-bg:#FBEBE2;
+      --accent-teal:#1E7A63;
+      --accent-teal-bg:#E2F2EC;
+      --accent-purple:#5B4B8A;
+      --accent-purple-bg:#ECE8F6;
+      --accent-amber:#9A6B16;
+      --accent-amber-bg:#FAF0DB;
+      --accent-green:#3B7A23;
+      --accent-green-bg:#EBF4E3;
+      --accent-red:#A23A2E;
+      --accent-red-bg:#F8E5E2;
+      --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    }
+    /* Scheme 06 colour classes */
+    .c-gray rect{fill:var(--card);stroke:var(--line)}
+    .c-gray text{fill:var(--ink)}
+    .c-gray polygon{fill:var(--card);stroke:var(--line)}
+    .c-blue rect{fill:var(--accent-blue-bg);stroke:var(--accent-blue)}
+    .c-blue text{fill:var(--accent-blue)}
+    .c-purple rect{fill:var(--accent-purple-bg);stroke:var(--accent-purple)}
+    .c-purple text{fill:var(--accent-purple)}
+    .c-teal rect{fill:var(--accent-teal-bg);stroke:var(--accent-teal)}
+    .c-teal text{fill:var(--accent-teal)}
+    .c-green rect{fill:var(--accent-green-bg);stroke:var(--accent-green)}
+    .c-green text{fill:var(--accent-green)}
+    .c-amber rect{fill:var(--accent-amber-bg);stroke:var(--accent-amber)}
+    .c-amber text{fill:var(--accent-amber)}
+    .c-coral rect{fill:var(--accent-coral-bg);stroke:var(--accent-coral)}
+    .c-coral text{fill:var(--accent-coral)}
+    .th{font-weight:600;font-size:13px}
+    .ts{font-size:10px;opacity:0.85}
+    @font-face{
+      font-family:'Fraunces';
+      src: local('Georgia');
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{
+      background:var(--bg);
+      color:var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      line-height:1.5;
+      padding-bottom:80px;
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
 
-  header.top{
-    padding:64px 24px 40px;
-    border-bottom:1px solid var(--line);
-    background:
-      linear-gradient(180deg, rgba(0,0,0,0.015), transparent);
-  }
-  .eyebrow{
-    font-family: var(--mono);
-    font-size:12px;
-    letter-spacing:0.12em;
-    text-transform:uppercase;
-    color:var(--ink-soft);
-    margin:0 0 14px;
-  }
-  h1{
-    font-family: Georgia, 'Times New Roman', serif;
-    font-weight:400;
-    font-size:clamp(32px, 5vw, 48px);
-    line-height:1.08;
-    margin:0 0 16px;
-    letter-spacing:-0.01em;
-  }
-  h1 em{font-style:italic; color:var(--accent-coral);}
-  .sub{
-    font-size:17px;
-    color:var(--ink-soft);
-    max-width:620px;
-    margin:0;
-  }
+    header.top{
+      padding:64px 24px 40px;
+      border-bottom:1px solid var(--line);
+      background:
+              linear-gradient(180deg, rgba(0,0,0,0.015), transparent);
+    }
+    .eyebrow{
+      font-family: var(--mono);
+      font-size:12px;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      color:var(--ink-soft);
+      margin:0 0 14px;
+    }
+    h1{
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight:400;
+      font-size:clamp(32px, 5vw, 48px);
+      line-height:1.08;
+      margin:0 0 16px;
+      letter-spacing:-0.01em;
+    }
+    h1 em{font-style:italic; color:var(--accent-coral);}
+    .sub{
+      font-size:17px;
+      color:var(--ink-soft);
+      max-width:620px;
+      margin:0;
+    }
 
-  nav.toc{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-top:32px;
-  }
-  nav.toc a{
-    font-family: var(--mono);
-    font-size:12px;
-    text-decoration:none;
-    color:var(--ink);
-    border:1px solid var(--line);
-    padding:7px 12px;
-    border-radius:100px;
-    background:var(--card);
-    transition:border-color .15s, background .15s;
-  }
-  nav.toc a:hover{border-color:var(--ink); background:#fff;}
+    nav.toc{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:32px;
+    }
+    nav.toc a{
+      font-family: var(--mono);
+      font-size:12px;
+      text-decoration:none;
+      color:var(--ink);
+      border:1px solid var(--line);
+      padding:7px 12px;
+      border-radius:100px;
+      background:var(--card);
+      transition:border-color .15s, background .15s;
+    }
+    nav.toc a:hover{border-color:var(--ink); background:#fff;}
 
-  section.scheme{
-    padding:56px 24px;
-    border-bottom:1px solid var(--line);
-    scroll-margin-top:24px;
-  }
-  section.scheme:nth-of-type(odd){background:rgba(0,0,0,0.012);}
+    section.scheme{
+      padding:56px 24px;
+      border-bottom:1px solid var(--line);
+      scroll-margin-top:24px;
+    }
+    section.scheme:nth-of-type(odd){background:rgba(0,0,0,0.012);}
 
-  .scheme-head{
-    display:flex;
-    align-items:baseline;
-    gap:16px;
-    margin-bottom:8px;
-  }
-  .scheme-num{
-    font-family: var(--mono);
-    font-size:13px;
-    color:var(--ink-soft);
-    white-space:nowrap;
-  }
-  h2{
-    font-family: Georgia, serif;
-    font-weight:400;
-    font-size:28px;
-    margin:0;
-    letter-spacing:-0.005em;
-  }
-  .scheme-desc{
-    color:var(--ink-soft);
-    font-size:15px;
-    margin:8px 0 28px;
-    max-width:640px;
-  }
+    .scheme-head{
+      display:flex;
+      align-items:baseline;
+      gap:16px;
+      margin-bottom:8px;
+    }
+    .scheme-num{
+      font-family: var(--mono);
+      font-size:13px;
+      color:var(--ink-soft);
+      white-space:nowrap;
+    }
+    h2{
+      font-family: Georgia, serif;
+      font-weight:400;
+      font-size:28px;
+      margin:0;
+      letter-spacing:-0.005em;
+    }
+    .scheme-desc{
+      color:var(--ink-soft);
+      font-size:15px;
+      margin:8px 0 28px;
+      max-width:640px;
+    }
 
-  .diagram-card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:8px;
-    overflow:hidden;
-  }
-  svg{display:block; width:100%; height:auto;}
+    .diagram-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:8px;
+      overflow:hidden;
+    }
+    svg{display:block; width:100%; height:auto;}
 
-  .node{cursor:pointer;}
-  .node rect{transition:filter .15s, transform .15s;}
-  .node:hover rect{filter:brightness(0.96);}
-  .node:active rect{transform:scale(0.99);}
-  .node text{pointer-events:none;}
-  .clickable-heading{cursor:pointer;transition:opacity .15s;}
-  .clickable-heading:hover{opacity:0.7;}
+    .node{cursor:pointer;}
+    .node rect{transition:filter .15s, transform .15s;}
+    .node:hover rect{filter:brightness(0.96);}
+    .node:active rect{transform:scale(0.99);}
+    .node text{pointer-events:none;}
+    .clickable-heading{cursor:pointer;transition:opacity .15s;}
+    .clickable-heading:hover{opacity:0.7;}
 
-  .hint{
-    font-family: var(--mono);
-    font-size:11px;
-    color:var(--ink-soft);
-    text-align:center;
-    margin-top:14px;
-    letter-spacing:0.02em;
-  }
-  .hint .ti{font-style:normal;}
+    .hint{
+      font-family: var(--mono);
+      font-size:11px;
+      color:var(--ink-soft);
+      text-align:center;
+      margin-top:14px;
+      letter-spacing:0.02em;
+    }
+    .hint .ti{font-style:normal;}
 
-  /* Glossary term nodes (HTML blocks for section 6) */
-  .term-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:28px}
-  .term-node{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;transition:border-color .15s, background .15s;font-size:13px;font-weight:600;font-family:var(--mono);text-align:center;color:var(--ink)}
-  .term-node:hover{border-color:var(--ink);background:#fff}
-  .term-badge{font-size:10px;padding:1px 7px;border-radius:4px;font-weight:600}
-  .term-badge.alpha{background:var(--accent-blue-bg);color:var(--accent-blue)}
-  .term-badge.pvalue{background:var(--accent-purple-bg);color:var(--accent-purple)}
-  .term-badge.beta{background:var(--accent-coral-bg);color:var(--accent-coral)}
-  .term-badge.power{background:var(--accent-green-bg);color:var(--accent-green)}
-  .term-badge.n{background:var(--accent-teal-bg);color:var(--accent-teal)}
-  .term-badge.es{background:var(--accent-amber-bg);color:var(--accent-amber)}
+    /* Glossary term nodes (HTML blocks for section 6) */
+    .term-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:28px}
+    .term-node{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;transition:border-color .15s, background .15s;font-size:13px;font-weight:600;font-family:var(--mono);text-align:center;color:var(--ink)}
+    .term-node:hover{border-color:var(--ink);background:#fff}
+    .term-badge{font-size:10px;padding:1px 7px;border-radius:4px;font-weight:600}
+    .term-badge.alpha{background:var(--accent-blue-bg);color:var(--accent-blue)}
+    .term-badge.pvalue{background:var(--accent-purple-bg);color:var(--accent-purple)}
+    .term-badge.beta{background:var(--accent-coral-bg);color:var(--accent-coral)}
+    .term-badge.power{background:var(--accent-green-bg);color:var(--accent-green)}
+    .term-badge.n{background:var(--accent-teal-bg);color:var(--accent-teal)}
+    .term-badge.es{background:var(--accent-amber-bg);color:var(--accent-amber)}
 
-  /* Expandable detail panel */
-  .detail-panel{
-    margin-top:0;
-    max-height:0;
-    overflow:hidden;
-    transition:max-height .35s ease, margin-top .35s ease;
-  }
-  .detail-panel.open{
-    margin-top:18px;
-    max-height:600px;
-  }
-  .detail-inner{
-    border:1px solid var(--line);
-    border-left:4px solid var(--detail-color, var(--accent-blue));
-    border-radius:10px;
-    padding:20px 22px;
-    background:var(--card);
-  }
-  .detail-inner h3{
-    font-family: Georgia, serif;
-    font-weight:400;
-    font-size:18px;
-    margin:0 0 10px;
-    color:var(--detail-color, var(--accent-blue));
-  }
-  .detail-inner p{
-    margin:0 0 10px;
-    font-size:14.5px;
-    color:var(--ink);
-  }
-  .detail-inner p:last-child{margin-bottom:0;}
-  .detail-inner code{
-    font-family:var(--mono);
-    background:rgba(0,0,0,0.05);
-    padding:1px 6px;
-    border-radius:4px;
-    font-size:13px;
-  }
-  .detail-inner ul{margin:8px 0 0; padding-left:18px;}
-  .detail-inner li{font-size:14.5px; margin-bottom:5px;}
+    /* Expandable detail panel */
+    .detail-panel{
+      margin-top:0;
+      max-height:0;
+      overflow:hidden;
+      transition:max-height .35s ease, margin-top .35s ease;
+    }
+    .detail-panel.open{
+      margin-top:18px;
+      max-height:600px;
+    }
+    .detail-inner{
+      border:1px solid var(--line);
+      border-left:4px solid var(--detail-color, var(--accent-blue));
+      border-radius:10px;
+      padding:20px 22px;
+      background:var(--card);
+    }
+    .detail-inner h3{
+      font-family: Georgia, serif;
+      font-weight:400;
+      font-size:18px;
+      margin:0 0 10px;
+      color:var(--detail-color, var(--accent-blue));
+    }
+    .detail-inner p{
+      margin:0 0 10px;
+      font-size:14.5px;
+      color:var(--ink);
+    }
+    .detail-inner p:last-child{margin-bottom:0;}
+    .detail-inner code{
+      font-family:var(--mono);
+      background:rgba(0,0,0,0.05);
+      padding:1px 6px;
+      border-radius:4px;
+      font-size:13px;
+    }
+    .detail-inner ul{margin:8px 0 0; padding-left:18px;}
+    .detail-inner li{font-size:14.5px; margin-bottom:5px;}
 
-  footer{
-    padding:40px 24px 20px;
-    text-align:center;
-    color:var(--ink-soft);
-    font-size:13px;
-    font-family:var(--mono);
-  }
+    /* Data classification table (section 01) */
+    .dc-table{width:100%; border-collapse:collapse; font-size:15px; background:var(--card);}
+    .dc-table th{padding:16px 20px; text-align:left; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; border-bottom:1px solid var(--line); transition:opacity .15s; vertical-align:top; line-height:1.35;}
+    .dc-table th:hover{opacity:0.7;}
+    .dc-table td{padding:16px 20px; border-bottom:1px solid var(--line); vertical-align:top;}
+    .dc-table tr:last-child td{border-bottom:none;}
+    .dc-table tr:hover td{background:rgba(0,0,0,0.012);}
+    .dc-th-nominal{color:var(--accent-blue);}
+    .dc-th-discrete{color:var(--accent-teal);}
+    .dc-th-continuous{color:var(--accent-amber);}
+    .dc-th-ordinal{color:var(--accent-purple);}
+    .dc-td-nominal{color:var(--accent-blue);}
+    .dc-td-discrete{color:var(--accent-teal);}
+    .dc-td-continuous{color:var(--accent-amber);}
+    .dc-td-ordinal{color:var(--accent-purple);}
+    .dc-td-qualitative{color:var(--accent-coral);}
+    .dc-td-quantitative{color:var(--accent-green);}
+    .dc-viz-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; margin-top:20px;}
+    .dc-viz-card{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; font-size:14px;}
+    .dc-viz-card h4{font-family:Georgia,serif; font-weight:400; font-size:15px; margin:0 0 6px;}
+    .dc-viz-card p{margin:0; color:var(--ink-soft); font-size:13.5px;}
 
-  @media (max-width: 640px){
-    header.top{padding:48px 20px 32px;}
-    section.scheme{padding:40px 20px;}
-    h2{font-size:22px;}
-  }
-</style>
+    /* Case study card (section 08) */
+    .ar-case-card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-top:24px;}
+    .ar-case-card h4{font-family:Georgia,serif; font-weight:400; font-size:17px; margin:0 0 4px;}
+    .ar-case-card .ar-hyp{color:var(--ink-soft); font-size:14px; margin:0 0 16px;}
+    .ar-case-card .ar-cols{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; margin-bottom:14px;}
+    .ar-case-card .ar-stat{border-left:3px solid var(--line); padding-left:12px;}
+    .ar-case-card .ar-stat .num{font-family:var(--mono); font-size:20px; font-weight:600; color:var(--ink);}
+    .ar-case-card .ar-stat .lab{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+    .ar-case-card .ar-verdict{border-radius:10px; padding:14px 16px; font-size:14px; background:var(--accent-green-bg); color:var(--accent-green); border-left:4px solid var(--accent-green); margin-top:6px;}
+
+    /* Tip callout (section 08 monitoring) */
+    .tip-note{border-radius:10px; padding:14px 16px; font-size:14px; background:var(--accent-blue-bg); color:var(--accent-blue); border-left:4px solid var(--accent-blue); margin-top:24px;}
+
+    footer{
+      padding:40px 24px 20px;
+      text-align:center;
+      color:var(--ink-soft);
+      font-size:13px;
+      font-family:var(--mono);
+    }
+
+    @media (max-width: 640px){
+      header.top{padding:48px 20px 32px;}
+      section.scheme{padding:40px 20px;}
+      h2{font-size:22px;}
+    }
+  </style>
 </head>
 <body>
 
@@ -246,12 +281,15 @@
     <p class="sub">Клікай на блоки в кожній схемі — розкриється коротке пояснення логіки рішення. Це не підручник, а маршрут: розподіл → викиди → вибірка → надійність → кореляція → A/B тест → розмір вибірки.</p>
     <nav class="toc">
       <a href="#s0">0. Загальна карта</a>
-      <a href="#s1">1. Викиди</a>
-      <a href="#s2">2. Вибірка</a>
-      <a href="#s3">3. Нормальність і значущість</a>
-      <a href="#s4">4. Кореляція</a>
-      <a href="#s5">5. A/B тестування</a>
-      <a href="#s6">6. Розмір вибірки</a>
+      <a href="#s1">1. Класифікація даних</a>
+      <a href="#s2">2. Викиди</a>
+      <a href="#s3">3. Вибірка</a>
+      <a href="#s4">4. Нормальність і значущість</a>
+      <a href="#s5">5. Кореляція</a>
+      <a href="#s6">6. A/B тестування</a>
+      <a href="#s7">7. Розмір вибірки</a>
+      <a href="#s8">8. Моніторинг тесту</a>
+      <a href="#s9">9. Аналіз результатів</a>
     </nav>
   </div>
 </header>
@@ -368,11 +406,151 @@
   </div>
 </section>
 
-<!-- ============ SECTION 1: OUTLIERS ============ -->
+<!-- ============ SECTION 0.5: DATA CLASSIFICATION ============ -->
 <section class="scheme" id="s1">
   <div class="wrap">
     <div class="scheme-head">
       <span class="scheme-num">01</span>
+      <h2>Класифікація даних</h2>
+    </div>
+    <p class="scheme-desc">Перш ніж шукати викиди чи формувати вибірку, потрібно визначити тип кожної змінної — від нього залежить, які методи аналізу й візуалізації взагалі застосовні.</p>
+
+    <div class="diagram-card" style="padding:6px; overflow-x:auto;">
+      <table class="dc-table">
+        <thead>
+        <tr>
+          <th class="dc-th-nominal clickable-heading" data-detail="dc-nominal" data-color="var(--accent-blue)">ID (Номінальні)</th>
+          <th class="dc-th-nominal clickable-heading" data-detail="dc-nominal" data-color="var(--accent-blue)">Категорія товару (Номінальні)</th>
+          <th class="dc-th-discrete clickable-heading" data-detail="dc-discrete" data-color="var(--accent-teal)">Кількість покупок (Дискретні)</th>
+          <th class="dc-th-continuous clickable-heading" data-detail="dc-continuous" data-color="var(--accent-amber)">Сума продажу, $ (Неперервні)</th>
+          <th class="dc-th-ordinal clickable-heading" data-detail="dc-ordinal" data-color="var(--accent-purple)">Рівень задоволеності (Порядкові)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="dc-td-qualitative">Якісні / Категоріальні</td>
+          <td class="dc-td-qualitative">Якісні / Категоріальні</td>
+          <td class="dc-td-quantitative">Кількісні дані</td>
+          <td class="dc-td-quantitative">Кількісні дані</td>
+          <td class="dc-td-qualitative">Якісні / Категоріальні</td>
+        </tr>
+        <tr>
+          <td class="dc-td-nominal">001</td>
+          <td class="dc-td-nominal">Електроніка</td>
+          <td class="dc-td-discrete">20</td>
+          <td class="dc-td-continuous">345.50</td>
+          <td class="dc-td-ordinal">Дуже задоволений</td>
+        </tr>
+        <tr>
+          <td class="dc-td-nominal">002</td>
+          <td class="dc-td-nominal">Одяг</td>
+          <td class="dc-td-discrete">15</td>
+          <td class="dc-td-continuous">255.00</td>
+          <td class="dc-td-ordinal">Задоволений</td>
+        </tr>
+        <tr>
+          <td class="dc-td-nominal">003</td>
+          <td class="dc-td-nominal">Іграшки</td>
+          <td class="dc-td-discrete">30</td>
+          <td class="dc-td-continuous">480.75</td>
+          <td class="dc-td-ordinal">Незадоволений</td>
+        </tr>
+        <tr>
+          <td class="dc-td-nominal">004</td>
+          <td class="dc-td-nominal">Електроніка</td>
+          <td class="dc-td-discrete">22</td>
+          <td class="dc-td-continuous">320.40</td>
+          <td class="dc-td-ordinal">Задоволений</td>
+        </tr>
+        <tr>
+          <td class="dc-td-nominal">005</td>
+          <td class="dc-td-nominal">Одяг</td>
+          <td class="dc-td-discrete">27</td>
+          <td class="dc-td-continuous">400.20</td>
+          <td class="dc-td-ordinal">Дуже задоволений</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="clickable-heading" data-detail="dc-glossary" data-color="var(--accent-blue)" style="font-family:Georgia,serif;font-weight:400;font-size:16px;margin:28px 12px 10px;padding-top:14px;border-top:1px solid var(--line)">Словник термінів</h3>
+    <p class="hint" style="text-align:left;margin:0 12px 14px;">клікни на заголовок стовпця або термін, щоб розкрити пояснення</p>
+
+    <div class="term-grid">
+      <div class="term-node" data-detail="dc-quantitative" data-color="var(--accent-green)">Кількісні дані</div>
+      <div class="term-node" data-detail="dc-discrete" data-color="var(--accent-teal)">Дискретні дані</div>
+      <div class="term-node" data-detail="dc-continuous" data-color="var(--accent-amber)">Неперервні дані</div>
+      <div class="term-node" data-detail="dc-qualitative" data-color="var(--accent-coral)">Якісні / Категоріальні</div>
+      <div class="term-node" data-detail="dc-nominal" data-color="var(--accent-blue)">Номінальні дані</div>
+      <div class="term-node" data-detail="dc-ordinal" data-color="var(--accent-purple)">Порядкові дані</div>
+    </div>
+
+    <div class="dc-viz-cards">
+      <div class="dc-viz-card">
+        <h4>📊 Гістограма</h4>
+        <p>використовується для <strong>неперервних кількісних даних</strong>.</p>
+      </div>
+      <div class="dc-viz-card">
+        <h4>📈 Стовпчаста діаграма</h4>
+        <p>підходить для <strong>якісних (категоріальних)</strong> та <strong>дискретних кількісних даних</strong>.</p>
+      </div>
+    </div>
+
+    <div class="detail-panel" id="panel-dc-glossary"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Як читати словник</h3>
+      <p>Дані спершу діляться на кількісні (числові) та якісні (категоріальні), а далі кожна з груп — на два підтипи. Тип визначає, які статистичні методи й графіки взагалі коректно застосовувати.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-dc-quantitative"><div class="detail-inner" style="--detail-color:var(--accent-green)">
+      <h3>Кількісні дані (Quantitative)</h3>
+      <p>Дані, які можна виміряти або порахувати числовим значенням. Діляться на дискретні та неперервні.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-dc-discrete"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Дискретні дані (Discrete)</h3>
+      <p><strong>Визначення:</strong> кількісні дані, що набувають лише конкретних окремих значень (зазвичай цілих чисел), отриманих шляхом підрахунку.</p>
+      <p><strong>Приклади:</strong> кількість покупок (20, 15, 30), кількість дітей (0, 1, 2, 3), кількість помилок.</p>
+      <p><strong>Візуалізація:</strong> стовпчаста діаграма, гістограма (з обережністю).</p>
+      <p><strong>Статистичні методи:</strong> середнє, медіана, мода, t-тест (якщо розподіл нормальний).</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-dc-continuous"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
+      <h3>Неперервні дані (Continuous)</h3>
+      <p><strong>Визначення:</strong> кількісні дані, що можуть набувати будь-якого значення в певному діапазоні (зокрема дробового), отриманих шляхом вимірювання.</p>
+      <p><strong>Приклади:</strong> сума продажу ($345.50), зріст (175.5 см), температура (36.6°C).</p>
+      <p><strong>Візуалізація:</strong> гістограма, boxplot, лінійний графік.</p>
+      <p><strong>Статистичні методи:</strong> середнє, стандартне відхилення, t-тест, ANOVA, кореляція Пірсона.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-dc-qualitative"><div class="detail-inner" style="--detail-color:var(--accent-coral)">
+      <h3>Якісні / Категоріальні дані (Qualitative)</h3>
+      <p>Дані, що описують властивості, характеристики або категорії, які не мають прямого числового вираження. Діляться на номінальні та порядкові.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-dc-nominal"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Номінальні дані (Nominal)</h3>
+      <p><strong>Визначення:</strong> якісні дані, які розділяють об'єкти на категорії без будь-якого внутрішнього порядку чи ієрархії.</p>
+      <p><strong>Приклади:</strong> ID (001, 002), категорія товару (Електроніка, Одяг), колір, місто.</p>
+      <p><strong>Візуалізація:</strong> стовпчаста діаграма, кругова діаграма.</p>
+      <p><strong>Статистичні методи:</strong> мода, тест хі-квадрат.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-dc-ordinal"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>Порядкові дані (Ordinal)</h3>
+      <p><strong>Визначення:</strong> якісні дані, які мають чітко визначений порядок або ієрархію, але відстань між значеннями неможливо точно виміряти математично.</p>
+      <p><strong>Приклади:</strong> рівень задоволеності (Дуже задоволений > Задоволений), освіта, рейтинг (1–5 зірок).</p>
+      <p><strong>Візуалізація:</strong> стовпчаста діаграма з впорядкованими категоріями.</p>
+      <p><strong>Статистичні методи:</strong> медіана, мода, тест Манна-Уїтні, кореляція Спірмена.</p>
+    </div></div>
+
+  </div>
+</section>
+
+<!-- ============ SECTION 1: OUTLIERS ============ -->
+<section class="scheme" id="s2">
+  <div class="wrap">
+    <div class="scheme-head">
+      <span class="scheme-num">02</span>
       <h2>Виявлення та обробка викидів</h2>
     </div>
     <p class="scheme-desc">Дерево рішень: який метод обрати та що робити з викидом після виявлення.</p>
@@ -483,10 +661,10 @@
 </section>
 
 <!-- ============ SECTION 2: SAMPLING ============ -->
-<section class="scheme" id="s2">
+<section class="scheme" id="s3">
   <div class="wrap">
     <div class="scheme-head">
-      <span class="scheme-num">02</span>
+      <span class="scheme-num">03</span>
       <h2>Методи формування вибірки</h2>
     </div>
     <p class="scheme-desc">Який метод семплування обрати залежно від структури популяції.</p>
@@ -611,10 +789,10 @@
 </section>
 
 <!-- ============ SECTION 3: NORMALITY & SIGNIFICANCE ============ -->
-<section class="scheme" id="s3">
+<section class="scheme" id="s4">
   <div class="wrap">
     <div class="scheme-head">
-      <span class="scheme-num">03</span>
+      <span class="scheme-num">04</span>
       <h2>Нормальність, довірчий інтервал та p-value</h2>
     </div>
     <p class="scheme-desc">Перевірка нормальності визначає, які тести можна застосовувати далі.</p>
@@ -711,10 +889,10 @@
 </section>
 
 <!-- ============ SECTION 4: CORRELATION ============ -->
-<section class="scheme" id="s4">
+<section class="scheme" id="s5">
   <div class="wrap">
     <div class="scheme-head">
-      <span class="scheme-num">04</span>
+      <span class="scheme-num">05</span>
       <h2>Вибір методу кореляції</h2>
     </div>
     <h4>Ступінь тісноти = «наскільки сильно пов’язані змінні» (загальне поняття).</h4>
@@ -858,11 +1036,11 @@
 </section>
 
 <!-- ============ SECTION 5: COMPARISON TESTS (A/B) ============ -->
-<section class="scheme" id="s5">
+<section class="scheme" id="s6">
 
   <div class="wrap">
     <div class="scheme-head">
-      <span class="scheme-num">05</span>
+      <span class="scheme-num">06</span>
       <h2>Вибір методу порівняння (A/B тестування)</h2>
     </div>
     <p class="scheme-desc">Три питання визначають тест: <strong>тип даних</strong> (частки чи числа) → <strong>кількість груп</strong> (2 чи 3+) → <strong>розподіл</strong> (нормальний чи ні) + залежність вибірок. Коли розподіл ненормальний — на допомогу приходять непараметричні тести (Манна-Уїтні, Вілкоксона, Крускала-Уолліса).</p>
@@ -1333,10 +1511,10 @@
 
 </section>
 <!-- ============ SECTION 6: SAMPLE SIZE ============ -->
-<section class="scheme" id="s6">
+<section class="scheme" id="s7">
   <div class="wrap">
     <div class="scheme-head">
-      <span class="scheme-num">06</span>
+      <span class="scheme-num">07</span>
       <h2 class="clickable-heading" data-detail="ss-main" data-color="var(--accent-purple)">Розрахунок розміру вибірки</h2>
     </div>
     <p class="scheme-desc">Який обсяг даних потрібен для надійного A/B тесту? Розмір вибірки залежить від трьох параметрів, кожен зі своєю логікою впливу. Якщо n завелике — є три способи скоригувати параметри, кожен з компромісом.</p>
@@ -1590,35 +1768,246 @@
   </div>
 </section>
 
+<!-- ============ SECTION 8: MONITORING ============ -->
+<section class="scheme" id="s8">
+  <div class="wrap">
+    <div class="scheme-head">
+      <span class="scheme-num">08</span>
+      <h2>Моніторинг A/B-тесту під час проведення</h2>
+    </div>
+    <p class="scheme-desc">Тест запущено (Секція 07), але це не означає «чекай і не втручайся». Поки триває збір даних, варто стежити за трьома речами — і знати, що робити, якщо щось піде не так.</p>
+
+    <h3 class="clickable-heading" data-detail="mon-what-info" data-color="var(--accent-blue)" style="font-family:Georgia,serif;font-weight:400;font-size:16px;margin:8px 12px 10px;">Що варто контролювати</h3>
+    <p class="hint" style="text-align:left;margin:0 12px 14px;">клікни на пункт, щоб розкрити пояснення</p>
+
+    <div class="term-grid">
+      <div class="term-node" data-detail="mon-conversion" data-color="var(--accent-blue)">Конверсія в реальному часі</div>
+      <div class="term-node" data-detail="mon-split" data-color="var(--accent-teal)">Рівномірність розподілу A/B</div>
+      <div class="term-node" data-detail="mon-completeness" data-color="var(--accent-purple)">Повнота даних</div>
+    </div>
+
+    <div class="detail-panel" id="panel-mon-what-info"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Навіщо моніторинг</h3>
+      <p>Моніторинг дозволяє вчасно виявити проблему й зупинити тест або внести правки, перш ніж вона спотворить фінальний результат чи нашкодить бізнесу.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-mon-conversion"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Рівень конверсій у реальному часі</h3>
+      <p>Стеж за конверсією обох варіантів (A і B) паралельно, поки триває тест — це найшвидший спосіб помітити різке відхилення.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-mon-split"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>Рівномірність розподілу користувачів</h3>
+      <p>Перевіряй, чи користувачі й далі діляться між групами як заплановано (наприклад, 50/50). Перекіс у розподілі — сигнал технічної проблеми, ще до аналізу результатів.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-mon-completeness"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>Повнота даних</h3>
+      <p>Переконайся, що всі потрібні події фіксуються без втрат і помилок трекінгу — «тихі» пропуски подій непомітно спотворюють метрики.</p>
+    </div></div>
+
+    <h3 class="clickable-heading" data-detail="mon-scenarios-info" data-color="var(--accent-coral)" style="font-family:Georgia,serif;font-weight:400;font-size:16px;margin:32px 12px 10px;padding-top:14px;border-top:1px solid var(--line)">Три сценарії реагування</h3>
+    <p class="hint" style="text-align:left;margin:0 12px 14px;">клікни на сценарій, щоб побачити рекомендовані дії</p>
+
+    <div class="term-grid">
+      <div class="term-node" data-detail="mon-below-mde" data-color="var(--accent-amber)">Приріст менший за MDE</div>
+      <div class="term-node" data-detail="mon-drop" data-color="var(--accent-red)">Значне падіння показників</div>
+      <div class="term-node" data-detail="mon-uneven" data-color="var(--accent-purple)">Підозра на нерівномірний розподіл</div>
+    </div>
+
+    <div class="detail-panel" id="panel-mon-scenarios-info"><div class="detail-inner" style="--detail-color:var(--accent-coral)">
+      <h3>MDE — точка відліку</h3>
+      <p>MDE (Minimum Detectable Effect) — мінімальний ефект, який тест спроможний надійно виявити (пов'язаний із розміром вибірки з Секції 07). Реакція на проміжні результати залежить від того, як вони співвідносяться саме з цим порогом.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-mon-below-mde"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
+      <h3>Приріст є, але менший за MDE</h3>
+      <p><strong>Подовжити тест:</strong> зібрати більше даних і перевірити, чи ріст стабільний.</p>
+      <p><strong>Аналіз тренду:</strong> перевірити, чи зростання стійке, навіть якщо воно незначне.</p>
+      <p><strong>Перегляд MDE:</strong> розглянути зниження порогу очікувань — невеликий, але стабільний приріст може бути достатньою підставою для впровадження, якщо це відповідає бізнес-цілям.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-mon-drop"><div class="detail-inner" style="--detail-color:var(--accent-red)">
+      <h3>Значне зниження показників</h3>
+      <p><strong>Негайно зупинити тест:</strong> щоб мінімізувати шкоду для бізнесу.</p>
+      <p><strong>Аналіз причин:</strong> технічні проблеми, погіршення UX чи інші фактори.</p>
+      <p><strong>Переглянути сегментацію:</strong> перевірити, чи падіння стосується всієї аудиторії, чи лише окремих сегментів.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-mon-uneven"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>Підозра на нерівномірний розподіл</h3>
+      <p><strong>Перевірка розподілу:</strong> чи відповідає кількість користувачів у групах запланованому співвідношенню.</p>
+      <p><strong>Статистичний тест:</strong> хі-квадрат тест — чи є значуща різниця в розподілі між групами.</p>
+      <p><strong>Аналіз трафіку та сегментів:</strong> переконатись, що всі джерела трафіку й сегменти (вік, регіон, пристрій) рівномірно спрямовуються на A і B.</p>
+    </div></div>
+
+    <div class="tip-note">
+      💡 Рівномірність розподілу критично важлива для точності тесту. Нерівномірний розподіл може призвести до помилкових висновків і необхідності повторного запуску тесту.
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ SECTION 8: RESULTS ANALYSIS & DECISIONS ============ -->
+<section class="scheme" id="s9">
+  <div class="wrap">
+    <div class="scheme-head">
+      <span class="scheme-num">09</span>
+      <h2>Аналіз результатів та прийняття рішень</h2>
+    </div>
+    <p class="scheme-desc">Тест запущено, дані зібрані до потрібного n (Секція 07). Останній крок — правильно прочитати результат і перетворити його на рішення.</p>
+
+    <h3 class="clickable-heading" data-detail="ar-flow-info" data-color="var(--accent-blue)" style="font-family:Georgia,serif;font-weight:400;font-size:16px;margin:8px 12px 10px;">Покроковий алгоритм аналізу</h3>
+    <p class="hint" style="text-align:left;margin:0 12px 14px;">клікни на крок, щоб розкрити пояснення</p>
+
+    <div class="term-grid">
+      <div class="term-node" data-detail="ar-metrics" data-color="var(--accent-blue)">1. Ключові метрики</div>
+      <div class="term-node" data-detail="ar-compare" data-color="var(--accent-teal)">2. Порівняння груп</div>
+      <div class="term-node" data-detail="ar-pvalue" data-color="var(--accent-purple)">3. p-значення</div>
+      <div class="term-node" data-detail="ar-interpret" data-color="var(--accent-amber)">4. Інтерпретація</div>
+      <div class="term-node" data-detail="ar-secondary" data-color="var(--accent-coral)">5. Допоміжні метрики</div>
+      <div class="term-node" data-detail="ar-segments" data-color="var(--accent-teal)">6. Підгрупи</div>
+      <div class="term-node" data-detail="ar-conclusion" data-color="var(--accent-green)">7. Висновок</div>
+      <div class="term-node" data-detail="ar-document" data-color="var(--accent-blue)">8. Документування</div>
+    </div>
+
+    <div class="detail-panel" id="panel-ar-flow-info"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>Як читати цей ланцюжок</h3>
+      <p>Кожен крок спирається на попередній: спершу рахуєш цифри, потім перевіряєш їх статистично, тоді інтерпретуєш і лише після цього ухвалюєш рішення. Пропуск кроку (наприклад, ігнорування практичної значущості) — типова причина хибних висновків.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-metrics"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>1. Обчислення ключових метрик</h3>
+      <p><strong>Основні метрики</strong> — показники, визначені ще до старту тесту: кількість конверсій, середній чек, відсоток відтоку тощо.</p>
+      <p><strong>Допоміжні метрики</strong> — додаткові показники, які дають контекст для інтерпретації основного результату.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-compare"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>2. Порівняння результатів між групами</h3>
+      <p><strong>Візуалізація:</strong> графіки й таблиці для наочного порівняння контрольної та тестової груп.</p>
+      <p><strong>Статистичний тест:</strong> t-тест, z-тест або хі-квадрат — залежно від типу метрики (Секція 06 допомагає обрати).</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-pvalue"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>3. Обчислення p-значення</h3>
+      <p>p-value показує ймовірність отримати такі ж або екстремальніші результати, якби різниці між групами насправді не було. Порівнюється з порогом α, зазвичай 0.05.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-interpret"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
+      <h3>4. Інтерпретація результатів</h3>
+      <p><strong>Статистична значущість:</strong> p-value &lt; 0.05 → різниця, ймовірно, не випадкова.</p>
+      <p><strong>Практична значущість:</strong> чи має ця різниця реальну вагу для бізнесу. Статистично значущий результат не завжди варто впроваджувати — ефект може бути надто малим, щоб виправдати витрати.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-secondary"><div class="detail-inner" style="--detail-color:var(--accent-coral)">
+      <h3>5. Аналіз допоміжних метрик</h3>
+      <p><strong>Контекст:</strong> допоміжні метрики пояснюють, чому основна метрика змінилась (чи ні).</p>
+      <p><strong>Аномалії:</strong> несподівані сплески чи провали можуть свідчити про помилки в трекінгу, а не про реальний ефект — варто перевірити перед висновком.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-segments"><div class="detail-inner" style="--detail-color:var(--accent-teal)">
+      <h3>6. Робота з підгрупами</h3>
+      <p><strong>Сегментація:</strong> перевір результат окремо для нових і постійних користувачів, платформ, регіонів — середній результат може ховати протилежні ефекти в підгрупах.</p>
+      <p><strong>Контекст:</strong> врахуй, чи не вплинули зовнішні фактори (сезонність, акції) по-різному на різні сегменти.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-conclusion"><div class="detail-inner" style="--detail-color:var(--accent-green)">
+      <h3>7. Формування висновків та рекомендацій</h3>
+      <p>На основі всього вище — підтверди або відхили гіпотезу та сформулюй чіткі рекомендації: впровадити зміну, відхилити її чи протестувати додатково (див. чотири типи рішень нижче).</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-document"><div class="detail-inner" style="--detail-color:var(--accent-blue)">
+      <h3>8. Документування результатів</h3>
+      <p>Зафіксуй результати, висновки й рекомендації в одному документі — для історії експериментів і майбутніх посилань. Підготуй коротку презентацію для команди чи керівництва з ключовими цифрами.</p>
+    </div></div>
+
+    <h3 class="clickable-heading" data-detail="ar-decisions-info" data-color="var(--accent-purple)" style="font-family:Georgia,serif;font-weight:400;font-size:16px;margin:32px 12px 10px;padding-top:14px;border-top:1px solid var(--line)">Типи рішень після A/B-тесту</h3>
+    <p class="hint" style="text-align:left;margin:0 12px 14px;">клікни на варіант, щоб побачити коли його застосовувати</p>
+
+    <div class="term-grid">
+      <div class="term-node" data-detail="ar-accept" data-color="var(--accent-green)">✅ Приймаємо (Accept)</div>
+      <div class="term-node" data-detail="ar-reject" data-color="var(--accent-red)">🚫 Не приймаємо (Reject)</div>
+      <div class="term-node" data-detail="ar-partial" data-color="var(--accent-amber)">◐ Приймаємо частково</div>
+      <div class="term-node" data-detail="ar-iterate" data-color="var(--accent-purple)">↻ Відхиляємо й доопрацьовуємо</div>
+    </div>
+
+    <div class="detail-panel" id="panel-ar-decisions-info"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>Чому рішень чотири, а не два</h3>
+      <p>«Впровадити / не впровадити» — надто грубий поділ. Реальні результати часто неоднозначні: ефект є лише на частині сегментів, або ідея хороша, але реалізація невдала. Ці чотири варіанти покривають типові сценарії.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-accept"><div class="detail-inner" style="--detail-color:var(--accent-green)">
+      <h3>Приймаємо (Accept)</h3>
+      <p>Варіант B показав статистично значуще й практично вагоме покращення порівняно з A.</p>
+      <p><strong>Дії:</strong> впровадити зміну в постійну версію продукту, повідомити команду про результати.</p>
+      <p><strong>Коли:</strong> різниця значна і позитивно впливає на ключові метрики (конверсія, залученість, KPI).</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-reject"><div class="detail-inner" style="--detail-color:var(--accent-red)">
+      <h3>Не приймаємо (Reject)</h3>
+      <p>Варіант B не показав кращих результатів або виявився гіршим за A.</p>
+      <p><strong>Дії:</strong> відмовитись від впровадження; за потреби — додатковий аналіз причин невдачі.</p>
+      <p><strong>Коли:</strong> різниці немає, або B негативно впливає на ключові показники.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-partial"><div class="detail-inner" style="--detail-color:var(--accent-amber)">
+      <h3>Приймаємо частково (Partially Accept)</h3>
+      <p>Частина змін ефективна, частина — ні; або ефект є лише в окремому сегменті (наприклад, на мобільній версії, але не на десктопі).</p>
+      <p><strong>Дії:</strong> впровадити тільки ті зміни/сегменти, що показали позитивний ефект; протестувати решту окремо.</p>
+      <p><strong>Коли:</strong> результати неоднозначні, але їх можна розкласти на компоненти.</p>
+    </div></div>
+
+    <div class="detail-panel" id="panel-ar-iterate"><div class="detail-inner" style="--detail-color:var(--accent-purple)">
+      <h3>Не приймаємо і доопрацьовуємо (Reject and Iterate)</h3>
+      <p>Тест не дав очікуваного результату, але ідея має потенціал.</p>
+      <p><strong>Дії:</strong> проаналізувати причини невдачі, скоригувати гіпотезу чи сам тест, провести новий A/B-тест.</p>
+      <p><strong>Коли:</strong> є впевненість у потенціалі ідеї, але реалізацію варто доопрацювати.</p>
+    </div></div>
+
+    <div class="ar-case-card">
+      <h4>Приклад: колір кнопки «Купити»</h4>
+      <p class="ar-hyp">Гіпотеза: якщо змінити колір кнопки «Купити» на червоний, кількість кліків зросте на 10%.</p>
+      <div class="ar-cols">
+        <div class="ar-stat"><div class="num" style="color:var(--ink-soft)">A: 1000</div><div class="lab">кліків, контроль · конверсія 10%</div></div>
+        <div class="ar-stat" style="border-color:var(--accent-coral)"><div class="num" style="color:var(--accent-coral)">B: 1100</div><div class="lab">кліків, варіант · конверсія 11%</div></div>
+        <div class="ar-stat" style="border-color:var(--accent-purple)"><div class="num" style="color:var(--accent-purple)">p = 0.03</div><div class="lab">за кліками (значуще)</div></div>
+        <div class="ar-stat" style="border-color:var(--accent-purple)"><div class="num" style="color:var(--accent-purple)">p = 0.04</div><div class="lab">за конверсією (значуще)</div></div>
+      </div>
+      <div class="ar-verdict">✅ Гіпотеза підтверджена — обидва p-значення нижче 0.05. Рекомендація: впровадити зміну кольору кнопки на постійній основі.</div>
+    </div>
+
+  </div>
+</section>
+
 <footer>
   складено на основі лекційного матеріалу з аналізу даних
 </footer>
 
 <script>
-document.querySelectorAll('.node, .term-node, .clickable-heading').forEach(function(node){
-  node.addEventListener('click', function(){
-    var id = node.getAttribute('data-detail');
-    var color = node.getAttribute('data-color');
-    var panel = document.getElementById('panel-' + id);
-    if(!panel) return;
+  document.querySelectorAll('.node, .term-node, .clickable-heading').forEach(function(node){
+    node.addEventListener('click', function(){
+      var id = node.getAttribute('data-detail');
+      var color = node.getAttribute('data-color');
+      var panel = document.getElementById('panel-' + id);
+      if(!panel) return;
 
-    var wasOpen = panel.classList.contains('open');
+      var wasOpen = panel.classList.contains('open');
 
-    // close all panels within the same section
-    var section = node.closest('section');
-    section.querySelectorAll('.detail-panel.open').forEach(function(p){
-      p.classList.remove('open');
+      // close all panels within the same section
+      var section = node.closest('section');
+      section.querySelectorAll('.detail-panel.open').forEach(function(p){
+        p.classList.remove('open');
+      });
+
+      if(!wasOpen){
+        if(color){ panel.querySelector('.detail-inner').style.setProperty('--detail-color', color); }
+        panel.classList.add('open');
+        setTimeout(function(){
+          panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+        }, 200);
+      }
     });
-
-    if(!wasOpen){
-      if(color){ panel.querySelector('.detail-inner').style.setProperty('--detail-color', color); }
-      panel.classList.add('open');
-      setTimeout(function(){
-        panel.scrollIntoView({behavior:'smooth', block:'nearest'});
-      }, 200);
-    }
   });
-});
 
 </script>
 
