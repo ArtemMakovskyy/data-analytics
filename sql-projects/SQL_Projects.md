@@ -1,4 +1,4 @@
-# 📂 SQL Projects
+# 🗄🖧 SQL Projects
 
 > [← Back to Portfolio](../README.md)
 
