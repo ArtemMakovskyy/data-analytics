@@ -12,14 +12,49 @@ A collection of interactive business dashboards built in Tableau Public. Each pr
 
 | # | Dashboard | Domain | Key Metrics | Live Link |
 |---|-----------|--------|-------------|-----------|
-| 1 | [Sales Dashboard](#1-sales-dashboard) | E-commerce / Retail | Revenue, Orders, AOV | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/sales_17805873094240/Sales) |
-| 2 | [Email Metrics](#2-email-metrics) | Email Marketing | Open Rate, CTR, CTOR | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/emailmetrix_17794634158370/Emailmetrix) |
-| 3 | [Session Analysis](#3-session-analysis) | Web Analytics | Sessions, Channels, Devices | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/Sessionanalysis_17793577148440/Sessionanalysis) |
-| 4 | [Netflix Catalogue](#4-netflix-catalogue-analysis) | Exploratory Data Analysis | Content mix, Geography, Trends | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/Nefflix/Netflix) |
+| 1 | [Campaign ROI Dashboard](#1-campaign-roi-dashboard) | Marketing Analytics | ROAS, CPI, Cost vs Revenue | [▶ View](https://public.tableau.com/views/MarketingPerformanceDashboard_17884454116940/MarketingPerformanceDashboard?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link) |
+| 2 | [Sales Dashboard](#2-sales-dashboard) | E-commerce / Retail | Revenue, Orders, AOV | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/sales_17805873094240/Sales) |
+| 3 | [Email Metrics](#3-email-metrics) | Email Marketing | Open Rate, CTR, CTOR | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/emailmetrix_17794634158370/Emailmetrix) |
+| 4 | [Session Analysis](#4-session-analysis) | Web Analytics | Sessions, Channels, Devices | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/Sessionanalysis_17793577148440/Sessionanalysis) |
+| 5 | [Netflix Catalogue](#5-netflix-catalogue-analysis) | Exploratory Data Analysis | Content mix, Geography, Trends | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/Nefflix/Netflix) |
 
 ---
 
-## 1. Sales Dashboard
+## 1. Campaign ROI Dashboard
+
+<img src="campaign-roi-dashboard/img/performanceDashboard.png" width="300" alt="Campaign ROI Dashboard"/>
+
+**[▶ Open Live Dashboard](https://public.tableau.com/views/MarketingPerformanceDashboard_17884454116940/MarketingPerformanceDashboard?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)**
+
+### What it shows
+Marketing performance dashboard for mobile app campaigns. Tracks ad spend vs revenue across multiple campaigns to determine which ones are profitable (ROAS > 1) and which are losing budget. Data covers June–July 2026.
+
+### Key Metrics
+| Metric | Value |
+|--------|-------|
+| Overall ROAS | 346% |
+| Total Cost | $20,575 |
+| Total Revenue | $71,254 |
+| Total Installs | 482,248 |
+| Avg CPI | $0.04 |
+
+### Views & Interactivity
+- **KPI Cards** — Total Cost, Revenue, ROAS, Installs at a glance
+- **ROAS by Campaign** — horizontal bar chart with log scale and break-even reference line (1.0)
+- **Cost vs Revenue** — dual axis line chart showing daily dynamics
+- **Cost by Media Source** — budget distribution across channels
+- **CPI by Campaign** — cost per install comparison
+- **Filters:** date range, app_id, media_source, campaign_name
+
+### Tools & Skills
+`Tableau` `Marketing Analytics` `SQL (BigQuery)` `ROAS Analysis` `KPI Cards` `Interactive Filters`
+
+### Details
+[Read full case study →](campaign-roi-dashboard/README.md) — task context, SQL query, data processing logic, metrics definitions, dashboard layout, and key insights.
+
+---
+
+## 2. Sales Dashboard
 
 <img src="img/sales.png" width="300" alt="Sales Dashboard"/>
 
@@ -50,7 +85,7 @@ End-to-end retail sales performance for a furniture company (Nov 2020 – Jan 20
 
 ---
 
-## 2. Email Metrics
+## 3. Email Metrics
 
 <img src="img/email_metrix.png" width="300" alt="Email Metrics Dashboard"/>
 
@@ -82,7 +117,7 @@ Open Rate dropped sharply from ~44% to ~15% in late January 2021 — a clear sig
 
 ---
 
-## 3. Session Analysis
+## 4. Session Analysis
 
 <img src="img/session_analysis.png" width="300" alt="Session Analysis Dashboard"/>
 
@@ -114,7 +149,7 @@ Web traffic analysis covering browser usage, acquisition channels, geographic di
 
 ---
 
-## 4. Netflix Catalogue Analysis
+## 5. Netflix Catalogue Analysis
 
 <img src="img/netflix.png" width="300" alt="Netflix Dashboard"/>
 
@@ -157,7 +192,7 @@ The proportion of TV Shows has been gradually increasing since 2017, reflecting 
 | KPI dashboard design | Sales, Email Metrics |
 | Time series & trend analysis | Sales, Email Metrics, Session Analysis, Netflix |
 | Geographic visualisation | Sales, Session Analysis, Netflix |
-| Marketing analytics | Email Metrics |
+| Marketing analytics | Email Metrics, Campaign ROI |
 | Web / product analytics | Session Analysis |
 | Exploratory data analysis | Netflix |
 | Interactive filters & parameters | All projects |
