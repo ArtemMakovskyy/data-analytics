@@ -81,7 +81,6 @@ The final showroom granularity is **day × app_id × media_source × campaign_id
 
 - **[Calculated ROAS]** = `SUM(total_revenue_usd) / SUM(cost_usd)`
 - **[Calculated CPI]** = `IF SUM(installs) > 0 THEN SUM(cost_usd) / SUM(installs) END`
-- **ROAS by Campaign:** diverging color palette (2 steps, center = 1.0), logarithmic axis to smooth outliers, reference line at break-even (1.0)
 
 ### Interactivity
 
