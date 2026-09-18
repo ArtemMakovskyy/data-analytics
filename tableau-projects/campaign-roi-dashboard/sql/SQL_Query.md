@@ -1,6 +1,6 @@
 # SQL Query — Marketing Showroom
 
-> [← Back to Campaign ROI Dashboard](README.md)
+> [← Back to Campaign ROI Dashboard](../README.md)
 
 ---
 
@@ -24,6 +24,20 @@ Each table is cast to a unified structure:
 - `REPLACE(COALESCE(NULLIF(...), 'Unattributed'), 'mock_campaign_', 'mc_')` — shortens campaign names
 - `COUNT(DISTINCT advertising_id)` — unique user count (deduplicated installs)
 - `SAFE_DIVIDE(...)` — safe division (returns NULL on divide-by-zero)
+
+### Two Revenue Sources
+
+Both `ad_revenue_raw` and `in_app_events_report` are included in `total_revenue_usd` because both are consequences of user acquisition through an ad campaign:
+
+- **ad_revenue_raw** — passive revenue from in-app ads (user sees video/banner → app receives payment from advertiser)
+- **in_app_events_report** — active revenue from purchases/subscriptions (user consciously pays)
+
+Together they form the total campaign revenue. ROAS is calculated from both since both income channels stem from the user acquired by the ad campaign.
+
+### Deduplication & Empty Values
+
+- **Install deduplication:** `COUNT(DISTINCT advertising_id)` is used because duplicate rows can appear within a single day for the same user
+- **Empty campaign names:** `COALESCE(NULLIF(MAX(campaign_name), ''), 'Unattributed')` replaces missing or blank campaign names with 'Unattributed', ensuring these rows remain visible in the dashboard instead of being lost during grouping
 
 ---
 

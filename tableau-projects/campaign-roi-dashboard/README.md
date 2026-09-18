@@ -27,10 +27,13 @@ A company develops mobile apps and buys traffic — paying ad networks for insta
 
 [Read full SQL query →](sql/SQL_Query.md)
 
-1. **UNION ALL** — all four tables are unified into a single structure and merged into one CTE `combined`
-2. **Revenue attribution** via `advertising_id` — each user is linked to the campaign that acquired them
-3. **GROUP BY** — aggregation by `day × app_id × media_source × campaign_id`
-4. **Metric calculation** — ROAS, CPI, total revenue
+1. **UNION ALL** — all four tables are cast to a unified structure and merged into one CTE `combined`
+2. **GROUP BY** — aggregation by `day × app_id × media_source × campaign_id`
+3. **Metric calculation** — ROAS, CPI, total revenue
+4. **Two revenue sources** — `ad_revenue_raw` (passive in-app ad revenue) and `in_app_events_report` (active purchase/subscription revenue) are summed into `total_revenue_usd` because both are consequences of user acquisition through an ad campaign
+5. **Deduplication** — `COUNT(DISTINCT advertising_id)` handles duplicate rows within a single day; missing or blank `campaign_name` is replaced with 'Unattributed' so these rows remain visible in the dashboard
+
+The final showroom granularity is **day × app_id × media_source × campaign_id**, allowing slices by time, campaign, or traffic source and aggregation into any desired period.
 
 ---
 
@@ -47,6 +50,7 @@ A company develops mobile apps and buys traffic — paying ad networks for insta
 | Total Revenue | Ad Revenue + IAP Revenue | Combined revenue |
 | **ROAS** | Total Revenue / Cost | Return on ad spend (>1 = profitable) |
 | **CPI** | Cost / Installs | Cost per install |
+| **Profit (USD)** | `total_revenue_usd - cost_usd` | Net profit from campaign |
 
 ### Additional (calculated in Tableau)
 
@@ -73,12 +77,18 @@ A company develops mobile apps and buys traffic — paying ad networks for insta
 | 4 | Cost by Media Source | Horizontal Bar | Budget distribution across ad channels |
 | 5 | CPI by Campaign | Horizontal Bar | Cost per install by campaign |
 
+#### Key Calculated Fields
+
+- **[Calculated ROAS]** = `SUM(total_revenue_usd) / SUM(cost_usd)`
+- **[Calculated CPI]** = `IF SUM(installs) > 0 THEN SUM(cost_usd) / SUM(installs) END`
+- **ROAS by Campaign:** diverging color palette (2 steps, center = 1.0), logarithmic axis to smooth outliers, reference line at break-even (1.0)
+
 ### Interactivity
 
 - **Filters:** date range, app_id, media_source, campaign_name
 - **Reference Line:** ROAS = 1.0 (break-even mark)
 - **Logarithmic Axis:** for ROAS — smooths out anomalous campaign spikes
-- **Color Encoding:** Red-Green (ROAS < 1 = red, > 1 = green)
+- **Color Encoding:** diverging palette (2 steps), center = 1.0 (ROAS < 1 = red, > 1 = green)
 
 ---
 
