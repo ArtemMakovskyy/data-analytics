@@ -14,6 +14,7 @@ Select a category to view the relevant case studies and code:
 * [📈 Looker Studio Projects](lookerstudio-projects/LookerStudio_Projects.md) — Interactive dashboards and reports in Google Looker Studio.
 * [🐍 Python Projects](python-projects/Python_Projects.md) — Exploratory data analysis, data cleaning, and statistical visualization.
 * [🖥️ PC Analyzer](pc-analyzer/PC_Analyzer.md) — ETL pipeline, price/performance analytics, and Excel reporting across 500+ PC components.
+* [🧪 A/B Testing](a-b_testing/A-B_Testing.md) — BigQuery session metrics, SRM check, z-test with confidence intervals, Tableau dashboard.
 
 ---
 

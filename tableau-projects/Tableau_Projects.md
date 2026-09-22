@@ -12,15 +12,49 @@ A collection of interactive business dashboards built in Tableau Public. Each pr
 
 | # | Dashboard | Domain | Key Metrics | Live Link |
 |---|-----------|--------|-------------|-----------|
-| 1 | [Campaign ROI Dashboard](#1-campaign-roi-dashboard) | Marketing Analytics | ROAS, CPI, Cost vs Revenue | [▶ View](https://public.tableau.com/views/MarketingPerformanceDashboard_17884454116940/MarketingPerformanceDashboard?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link) |
-| 2 | [Sales Dashboard](#2-sales-dashboard) | E-commerce / Retail | Revenue, Orders, AOV | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/sales_17805873094240/Sales) |
-| 3 | [Email Metrics](#3-email-metrics) | Email Marketing | Open Rate, CTR, CTOR | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/emailmetrix_17794634158370/Emailmetrix) |
-| 4 | [Session Analysis](#4-session-analysis) | Web Analytics | Sessions, Channels, Devices | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/Sessionanalysis_17793577148440/Sessionanalysis) |
-| 5 | [Netflix Catalogue](#5-netflix-catalogue-analysis) | Exploratory Data Analysis | Content mix, Geography, Trends | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/Nefflix/Netflix) |
+| 1 | [A/B Testing](#1-ab-testing) | Experimentation | Conversion Rate, Lift, p-value, SRM | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/ABTEST_17848154968170/ABtest) |
+| 2 | [Campaign ROI Dashboard](#2-campaign-roi-dashboard) | Marketing Analytics | ROAS, CPI, Cost vs Revenue | [▶ View](https://public.tableau.com/views/MarketingPerformanceDashboard_17884454116940/MarketingPerformanceDashboard?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link) |
+| 3 | [Sales Dashboard](#3-sales-dashboard) | E-commerce / Retail | Revenue, Orders, AOV | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/sales_17805873094240/Sales) |
+| 4 | [Email Metrics](#4-email-metrics) | Email Marketing | Open Rate, CTR, CTOR | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/emailmetrix_17794634158370/Emailmetrix) |
+| 5 | [Session Analysis](#5-session-analysis) | Web Analytics | Sessions, Channels, Devices | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/Sessionanalysis_17793577148440/Sessionanalysis) |
+| 6 | [Netflix Catalogue](#6-netflix-catalogue-analysis) | Exploratory Data Analysis | Content mix, Geography, Trends | [▶ View](https://public.tableau.com/app/profile/artem.makovskyi/viz/Nefflix/Netflix) |
 
 ---
 
-## 1. Campaign ROI Dashboard
+## 1. A/B Testing
+
+<img src="../a-b_testing/data/pic/tableau-dashboard.png" width="300" alt="A/B Test Dashboard"/>
+
+**[▶ Open Live Dashboard](https://public.tableau.com/app/profile/artem.makovskyi/viz/ABTEST_17848154968170/ABtest)**
+
+### What it shows
+A/B test results for 4 tests × 2 groups (50/50 split) on web analytics event data (Nov 2020 – Jan 2021, 800k+ rows from BigQuery). The dashboard validates the randomization with an SRM check and compares event volumes and conversion metrics between the control and variant groups.
+
+### Key Metrics
+| Metric | Group 1 | Group 2 | Result |
+|--------|---------|---------|--------|
+| Primary CR (add_payment_info / session) | 4.38% | 4.93% | **+12.54%, p = 0.000** |
+| Secondary CR (new account / session) | 8.43% | 8.15% | −3.35%, p = 0.123 (n.s.) |
+| Sessions | 45,362 | 45,193 | balanced sample |
+
+### Views & Interactivity
+- **Groups pie** — 50/50 split of the selected test
+- **SRM panels** — device, continent, country, channel distributions by group (identical → randomization valid)
+- **Value / Value % table** — event counts and relative difference between groups
+- **Filters:** date range, test (1–4), continent, device, country, channel
+
+### Notable Insight
+The whole funnel moves in the same direction — `page_view` +3.4% → `begin_checkout` +6.3% → `add_shipping_info` +6.2% → `add_payment_info` +12.1% — and the primary lift is statistically significant (p < 0.001, CIs do not overlap): **Group 2 wins**.
+
+### Tools & Skills
+`Tableau` `A/B Testing` `SQL (BigQuery)` `Z-test` `Confidence Intervals` `SRM Check` `Experimentation`
+
+### Details
+[Read full case study →](../a-b_testing/A-B_Testing.md) — dataset, SQL extract, pipeline, methodology, and full results.
+
+---
+
+## 2. Campaign ROI Dashboard
 
 <img src="campaign-roi-dashboard/img/performanceDashboard.png" width="300" alt="Campaign ROI Dashboard"/>
 
@@ -54,7 +88,7 @@ Marketing performance dashboard for mobile app campaigns. Tracks ad spend vs rev
 
 ---
 
-## 2. Sales Dashboard
+## 3. Sales Dashboard
 
 <img src="img/sales.png" width="300" alt="Sales Dashboard"/>
 
@@ -85,7 +119,7 @@ End-to-end retail sales performance for a furniture company (Nov 2020 – Jan 20
 
 ---
 
-## 3. Email Metrics
+## 4. Email Metrics
 
 <img src="img/email_metrix.png" width="300" alt="Email Metrics Dashboard"/>
 
@@ -117,7 +151,7 @@ Open Rate dropped sharply from ~44% to ~15% in late January 2021 — a clear sig
 
 ---
 
-## 4. Session Analysis
+## 5. Session Analysis
 
 <img src="img/session_analysis.png" width="300" alt="Session Analysis Dashboard"/>
 
@@ -149,7 +183,7 @@ Web traffic analysis covering browser usage, acquisition channels, geographic di
 
 ---
 
-## 5. Netflix Catalogue Analysis
+## 6. Netflix Catalogue Analysis
 
 <img src="img/netflix.png" width="300" alt="Netflix Dashboard"/>
 
@@ -189,11 +223,12 @@ The proportion of TV Shows has been gradually increasing since 2017, reflecting 
 
 | Skill | Projects |
 |-------|----------|
-| KPI dashboard design | Sales, Email Metrics |
+| A/B testing & experiment analysis | A/B Testing |
+| KPI dashboard design | Sales, Email Metrics, A/B Testing |
 | Time series & trend analysis | Sales, Email Metrics, Session Analysis, Netflix |
-| Geographic visualisation | Sales, Session Analysis, Netflix |
+| Geographic visualisation | Sales, Session Analysis, Netflix, A/B Testing |
 | Marketing analytics | Email Metrics, Campaign ROI |
-| Web / product analytics | Session Analysis |
+| Web / product analytics | Session Analysis, A/B Testing |
 | Exploratory data analysis | Netflix |
 | Interactive filters & parameters | All projects |
 
