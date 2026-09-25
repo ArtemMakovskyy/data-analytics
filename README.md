@@ -6,7 +6,7 @@ Welcome to my portfolio. This repository contains projects demonstrating my skil
 
 ## Navigation
 
-Select a category to view the relevant case studies and code:
+hold **Ctrl + click** to open in a new window
 
 * [🖧 SQL Projects](sql-projects/SQL_Projects.md) — Query optimization, database schema design, ETL processes, and analytical queries.
 * [📈 Tableau Projects](tableau-projects/Tableau_Projects.md) — Interactive business dashboards, KPI visualization, and metrics analysis.
@@ -14,7 +14,8 @@ Select a category to view the relevant case studies and code:
 * [📈 Looker Studio Projects](lookerstudio-projects/LookerStudio_Projects.md) — Interactive dashboards and reports in Google Looker Studio.
 * [🐍 Python Projects](python-projects/Python_Projects.md) — Exploratory data analysis, data cleaning, and statistical visualization.
 * [🖥️ PC Analyzer](pc-analyzer/PC_Analyzer.md) — ETL pipeline, price/performance analytics, and Excel reporting across 500+ PC components.
-* [🧪 A/B Testing](a-b_testing/A-B_Testing.md) — BigQuery session metrics, SRM check, z-test with confidence intervals, Tableau dashboard.
+* [🧪 A/B Testing](a-b_testing/A-B_Testing.md) — BigQuery session metrics, SRM check, z-test with confidence intervals in Excel, Tableau dashboard.
+* [🚀 AARRR Scaling Decision Tool](https://artemmakovskyy.github.io/aarrr-scaling-decision-tool/) — Interactive AARRR pipeline with unit economics (CAC, LTV, LTV/CAC, ROAS): shows which data is missing to decide whether to scale user acquisition.
 
 ---
 
@@ -26,7 +27,8 @@ pipeline from 7 hours to 15 minutes through indexing, batching, and
 multi-threaded processing. Comfortable moving from raw data to SQL 
 transformations to interactive dashboards end-to-end.
 
-* **Tools:** SQL (PostgreSQL, MySQL), Python (Pandas, NumPy, Matplotlib, Seaborn), Tableau
+* **Tools:** SQL (PostgreSQL, MySQL, BigQuery), Python (Pandas, NumPy, Matplotlib, Seaborn), Tableau, Excel (PivotTables, z-test, report automation)
+* **Domain:** Product analytics · AARRR · Unit economics (CAC, LTV, ROAS, retention, churn)
 * **Background:** Java & data pipeline development
 * **Location:** Kyiv, Ukraine (Open to Remote)
 * **Contacts:** Email: [artem.makovskyi.jv@gmail.com](mailto:artem.makovskyi.jv@gmail.com) | [GitHub](https://github.com/ArtemMakovskyy) | [LinkedIn](https://www.linkedin.com/in/artem-makovskyi-557783304/)

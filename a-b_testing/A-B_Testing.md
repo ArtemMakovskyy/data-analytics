@@ -4,7 +4,7 @@
 
 *Tech stack:* SQL (BigQuery) · Excel (pivots, z-test) · Tableau
 
-**[▶ Open Live Dashboard](https://public.tableau.com/app/profile/artem.makovskyi/viz/ABTEST_17848154968170/ABtest)** · **[⬇ Download the workbook](https://drive.google.com/uc?export=download&id=15jZbn_S5cadXUCjm2huYjlBo4_fyCOZS)**
+**[▶ Open Live Dashboard](https://public.tableau.com/app/profile/artem.makovskyi/viz/ABTEST_17848154968170/ABtest)** · **[⬇ Download AB-Testing conclusion and calculations.xlsx ](https://drive.google.com/uc?export=download&id=15jZbn_S5cadXUCjm2huYjlBo4_fyCOZS)**
 
 <img src="data/pic/tableau-dashboard.png" width="500" alt="A/B Test Tableau dashboard"/>
 
