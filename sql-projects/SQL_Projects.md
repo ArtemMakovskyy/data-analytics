@@ -114,10 +114,10 @@ erDiagram
 
 [Table descriptions and relationships](https://github.com/ArtemMakovskyy/sql-extra/blob/master/docs/database-schema.md)
 
-- **Goal:** Demonstrate practical SQL skills across 13 normalized tables and 22 query files covering the full spectrum from basic JOINs to advanced window functions and CTEs.
+- **Goal:** Demonstrate practical SQL skills across 13 normalized tables and 23 query files covering the full spectrum from basic JOINs to advanced window functions, CTEs, and cohort analysis.
 - **Highlights:**
   - Designed a 13-table schema with 1:1, 1:M, and M:N relationships modeling real-world web analytics (sessions → events → orders, email sent → open → visit funnel).
-  - Wrote 22 SQL files covering `JOIN`, `CASE WHEN`, `UNION`, subqueries, window functions (`ROW_NUMBER`, `LAG`, `RANK`), CTEs, VIEWs, and temp tables.
+  - Wrote 23 SQL files covering `JOIN`, `CASE WHEN`, `UNION`, subqueries, window functions (`ROW_NUMBER`, `LAG`, `RANK`), CTEs, VIEWs, and temp tables, plus analytical scenarios like A/B testing and cohort retention analysis.
   - Built a full REST API (CRUD) for all entities using Spring Boot + JPA + MapStruct.
   - Used Liquibase for 13 versioned DDL migrations and DataFaker for generating 2000+ sessions, A/B test groups, email campaigns, and order histories.
 - **Repo:** [GitHub](https://github.com/ArtemMakovskyy/sql-extra)
@@ -154,6 +154,7 @@ All query files live in the [`sql/`](https://github.com/ArtemMakovskyy/sql-extra
 **Other:**
 
 - [`09-ab.sql`](https://github.com/ArtemMakovskyy/sql-extra/blob/master/sql/09-ab.sql) — A/B testing analysis: sessions, events, orders, new accounts by test groups
+- [`10-cohort-analysis.sql`](https://github.com/ArtemMakovskyy/sql-extra/blob/master/sql/10-cohort-analysis.sql) — cohort analysis: email-visit retention by account signup week (weekly cohorts via `DATE_TRUNC('week')`, `visit_date / 7` as weeks since signup, retention rate per cohort, plus reconstruction of real visit dates from days-after-signup offsets)
 - [`extra.sql`](https://github.com/ArtemMakovskyy/sql-extra/blob/master/sql/extra.sql) — combined query joining all 13 tables: account-centric SELECT with CTEs aggregating 1:M relationships, plus marketing/finance tables joined by session date
 - [`temp.sql`](https://github.com/ArtemMakovskyy/sql-extra/blob/master/sql/temp.sql) — email activity (sent/open/visit) joined to session dates
 
